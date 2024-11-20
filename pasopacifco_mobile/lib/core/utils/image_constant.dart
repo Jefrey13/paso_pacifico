@@ -12,4 +12,10 @@ class ImageConstant {
   static String get site => '$imagePath/site.png';
   static String get trash => '$imagePath/trash.png';
   static String get user => '$imagePath/user.png';
+  static String get userlogin => '$imagePath/userlogin.png';
+  static String get password => '$imagePath/password.png';
+  static String get eye => '$imagePath/eye.png';
+  static String get phone => '$imagePath/phone.png';
+  static String get person => '$imagePath/person.png';
+  static String get email => '$imagePath/email.png';
 }

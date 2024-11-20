@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pasopacifco_mobile/core/app_export.dart';
-// import 'package:pasopacifco_mobile/routes/app_routes.dart';
+import 'package:pasopacifco_mobile/routes/app_routes.dart';
+//import 'package:pasopacifco_mobile/routes/app_routes.dart';
 
 // Test
 //@RoutePage()
@@ -35,7 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
               SizedBox(height: 28.h),
               Image.asset(
                 ImageConstant.Logo,
-                height: 312,
+                height: 312.h,
                 width: double.maxFinite,
               ),
               _buildColumn(context),
@@ -58,7 +59,7 @@ Widget _buildColumn(BuildContext context) {
     child: Column(
       children: [
         GestureDetector(
-          onTap: () => () {},
+          onTap: () => onTapImgImageone(context),
           child: Image.asset(
             ImageConstant.logo_welcome,
             height: 100.h,
@@ -71,6 +72,6 @@ Widget _buildColumn(BuildContext context) {
 }
 
 /// Navigates to the bienvenidoOneScreen when the action is triggered.
-//onTapImgImageone(BuildContext context) {
- //Navigator.pushNamed(context, AppRoutes.splashScreen);
-//}
+onTapImgImageone(BuildContext context) {
+  Navigator.pushNamed(context, AppRoutes.welcomeScreen);
+}
