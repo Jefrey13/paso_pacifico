@@ -146,8 +146,8 @@ class RegisterScreen extends StatelessWidget {
             right: 16.h,
             bottom: 6.h,
           ),
-          child: Image.asset(
-            ImageConstant.person,
+          child: CustomImageView(
+            imagePath: ImageConstant.person,
             height: 20.h,
             width: 20.h,
             fit: BoxFit.contain,
@@ -180,8 +180,8 @@ class RegisterScreen extends StatelessWidget {
             right: 16.h,
             bottom: 6.h,
           ),
-          child: Image.asset(
-            ImageConstant.userlogin,
+          child: CustomImageView(
+            imagePath: ImageConstant.userlogin,
             height: 20,
             width: 20,
             fit: BoxFit.contain,
@@ -215,8 +215,8 @@ class RegisterScreen extends StatelessWidget {
             right: 16.h,
             bottom: 6.h,
           ),
-          child: Image.asset(
-            ImageConstant.email,
+          child: CustomImageView(
+            imagePath: ImageConstant.email,
             height: 20.h,
             width: 22.h,
             fit: BoxFit.contain,
@@ -249,8 +249,8 @@ class RegisterScreen extends StatelessWidget {
             right: 16.h,
             bottom: 6.h,
           ),
-          child: Image.asset(
-            ImageConstant.phone,
+          child: CustomImageView(
+            imagePath: ImageConstant.phone,
             height: 20.h,
             width: 22.h,
             fit: BoxFit.contain,
@@ -282,8 +282,8 @@ class RegisterScreen extends StatelessWidget {
             right: 16.h,
             bottom: 6.h,
           ),
-          child: Image.asset(
-            ImageConstant.password,
+          child: CustomImageView(
+            imagePath: ImageConstant.password,
             height: 20.h,
             width: 22.h,
             fit: BoxFit.contain,
@@ -294,8 +294,8 @@ class RegisterScreen extends StatelessWidget {
         ),
         suffix: Container(
           margin: EdgeInsets.fromLTRB(16.h, 6.h, 20.h, 6.h),
-          child: Image.asset(
-            ImageConstant.eye,
+          child: CustomImageView(
+            imagePath: ImageConstant.eye,
             height: 20.h,
             width: 22.h,
             fit: BoxFit.contain,

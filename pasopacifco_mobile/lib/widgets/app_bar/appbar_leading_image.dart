@@ -26,8 +26,8 @@ class AppbarLeadingImage extends StatelessWidget {
         onTap: () {
           onTap?.call();
         },
-        child: Image.asset(
-          imagePath!,
+        child: CustomImageView(
+          imagePath: imagePath!,
           height: height ?? 24.h,
           width: width ?? 24.h,
           fit: BoxFit.contain,

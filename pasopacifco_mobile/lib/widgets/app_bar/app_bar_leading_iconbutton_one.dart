@@ -30,8 +30,8 @@ class AppBarLeadingIconbuttonOne extends StatelessWidget {
               height: height ?? 42.h,
               width: width ?? 42.h,
               decoration: IconButttonStyleHelper.none,
-              child: Image.asset(
-                imagePath ?? ImageConstant.back,
+              child: CustomImageView(
+                imagePath: ImageConstant.back,
               ),
             )));
   }

@@ -26,8 +26,8 @@ class WelcomeScreen extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 2.h),
                 child: Column(
                   children: [
-                    Image.asset(
-                      ImageConstant.logo_welcome1,
+                    CustomImageView(
+                      imagePath: ImageConstant.logo_welcome1,
                       height: 212.h,
                       width: double.maxFinite,
                       fit: BoxFit.cover,
@@ -65,7 +65,9 @@ class WelcomeScreen extends StatelessWidget {
                     CustomElevatedButton(
                       text: "Continuar ",
                       margin: EdgeInsets.only(right: 6.h),
-                      onPressed: () => onTapContinuar(context),
+                      onPressed: () {
+                        Navigator.pushNamed(context, AppRoutes.loginScreen);
+                      },
                     )
                   ],
                 ),
@@ -77,7 +79,7 @@ class WelcomeScreen extends StatelessWidget {
     );
   }
 
-  onTapContinuar(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.loginScreen);
-  }
+  //onTapContinuar(BuildContext context) {
+  //Navigator.pushNamed(context, AppRoutes.loginScreen);
+  //}
 }

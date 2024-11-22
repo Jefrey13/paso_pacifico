@@ -18,4 +18,7 @@ class ImageConstant {
   static String get phone => '$imagePath/phone.png';
   static String get person => '$imagePath/person.png';
   static String get email => '$imagePath/email.png';
+  static String get menu => '$imagePath/menu.png';
+  static String get report => '$imagePath/report.png';
+  static String get backD => '$imagePath/backD.png';
 }

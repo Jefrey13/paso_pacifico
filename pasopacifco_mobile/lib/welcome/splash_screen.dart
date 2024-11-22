@@ -34,10 +34,13 @@ class _SplashScreenState extends State<SplashScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(height: 28.h),
-              Image.asset(
-                ImageConstant.Logo,
+              CustomImageView(
+                imagePath: ImageConstant.Logo,
                 height: 312.h,
-                width: double.maxFinite,
+                width: 312.h,
+                radius: BorderRadius.circular(
+                  16.h,
+                ),
               ),
               _buildColumn(context),
             ],
@@ -60,8 +63,8 @@ Widget _buildColumn(BuildContext context) {
       children: [
         GestureDetector(
           onTap: () => onTapImgImageone(context),
-          child: Image.asset(
-            ImageConstant.logo_welcome,
+          child: CustomImageView(
+            imagePath: ImageConstant.logo_welcome,
             height: 100.h,
             width: 202.h,
           ),

@@ -22,14 +22,14 @@ extension ImageTypeExtension on String {
 
 enum ImageType { svg, png, jpg, network, file, uknow, local }
 
-abstract class CustomImageView extends StatelessWidget {
+class CustomImageView extends StatelessWidget {
   // [imagePath] is the path of the image to be displayed
   final String? imagePath;
   final double? height;
   final double? width;
   final Color? color;
   final BoxFit? fit;
-  final String? placeHolder;
+  final String placeHolder;
   final Alignment? alignment;
   final VoidCallback? onTap;
   final EdgeInsetsGeometry? margin;

@@ -1,5 +1,3 @@
-import 'dart:nativewrappers/_internal/vm/lib/ffi_allocation_patch.dart';
-
 import 'package:flutter/material.dart';
 import 'package:pasopacifco_mobile/core/app_export.dart';
 import 'package:pasopacifco_mobile/widgets/custom_icon_button.dart';
@@ -21,21 +19,23 @@ class AppBarLeadingIconbuttonTwo extends StatelessWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext coentext) {
+  Widget build(BuildContext context) {
     return Padding(
-        padding: margin ?? EdgeInsets.zero,
-        child: GestureDetector(
-            onTap: () {
-              onTap.call();
-            },
-            child: CustomIconButton(
-              height: height ?? 42.h,
-              width: width ?? 42.h,
-              padding: EdgeInsets.all(10.h),
-              decoration: IconButttonStyleHelper.none,
-              child: Image.asset(
-                imagePath ?? ImageConstant.back,
-              ),
-            )));
+      padding: margin ?? EdgeInsets.zero,
+      child: GestureDetector(
+        onTap: () {
+          onTap?.call();
+        },
+        child: CustomIconButton(
+          height: height ?? 42.h,
+          width: width ?? 42.h,
+          padding: EdgeInsets.all(10.h),
+          decoration: IconButttonStyleHelper.none,
+          child: CustomImageView(
+            imagePath: ImageConstant.back,
+          ),
+        ),
+      ),
+    );
   }
 }

@@ -67,8 +67,8 @@ class LoginScreen extends StatelessWidget {
                   right: 16.h,
                   bottom: 6.h,
                 ),
-                child: Image.asset(
-                  ImageConstant.userlogin,
+                child: CustomImageView(
+                  imagePath: ImageConstant.userlogin,
                   height: 20.h,
                   width: 20.h,
                   fit: BoxFit.contain,
@@ -107,8 +107,8 @@ class LoginScreen extends StatelessWidget {
                   right: 16.h,
                   bottom: 6.h,
                 ),
-                child: Image.asset(
-                  ImageConstant.password,
+                child: CustomImageView(
+                  imagePath: ImageConstant.password,
                   height: 20.h,
                   width: 22.h,
                   fit: BoxFit.contain,
@@ -119,8 +119,8 @@ class LoginScreen extends StatelessWidget {
               ),
               suffix: Container(
                 margin: EdgeInsets.fromLTRB(16.h, 6.h, 20.h, 6.h),
-                child: Image.asset(
-                  ImageConstant.eye,
+                child: CustomImageView(
+                  imagePath: ImageConstant.eye,
                   height: 20.h,
                   width: 22.h,
                   fit: BoxFit.contain,
@@ -144,7 +144,9 @@ class LoginScreen extends StatelessWidget {
             text: "Iniciar Sesion",
             margin: EdgeInsets.only(right: 2.h),
             buttonTextStyle: CustomTextStyles.bodyLargeOnPrimaryContainer,
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, AppRoutes.homeScreen);
+            },
           ),
           SizedBox(height: 24.h),
           GestureDetector(
@@ -175,6 +177,7 @@ class LoginScreen extends StatelessWidget {
   //onTapInciarsesion(BuildContext context) {
   //Navigator.pushNamed(context, AppRoutes.homeScreen);
   //}
+
   /// Navigates to the crearCuentaScreen when the action is triggered.
   onTapTxtAnnotienescuenta(BuildContext context) {
     Navigator.pushNamed(context, AppRoutes.registerScreen);
