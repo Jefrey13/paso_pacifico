@@ -3,11 +3,14 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:pasopacifco_mobile/core/app_export.dart';
 import 'package:pasopacifco_mobile/routes/app_routes.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 var globalMessengerKey = GlobalKey<ScaffoldMessengerState>();
-void main() {
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 

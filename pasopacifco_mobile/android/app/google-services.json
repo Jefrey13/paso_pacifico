@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "242639693612",
+    "project_id": "paso-pacifico",
+    "storage_bucket": "paso-pacifico.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:242639693612:android:836a17122bfb95447a6e89",
+        "android_client_info": {
+          "package_name": "com.example.pasopacifco_mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDYs-nsIr5CTiHHT_5GdhF7gAlMXlrk48"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

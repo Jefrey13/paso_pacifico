@@ -51,3 +51,10 @@ android {
 flutter {
     source = "../.."
 }
+// Aplica el plugin de Google Services al final
+apply plugin: 'com.google.gms.google-services'
+
+dependencies {
+    implementation platform('com.google.firebase:firebase-bom:33.6.0')
+    implementation 'com.google.firebase:firebase-auth'
+}
