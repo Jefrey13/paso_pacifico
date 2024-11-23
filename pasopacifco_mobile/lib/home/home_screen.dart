@@ -126,9 +126,9 @@ class HomeScreen extends StatelessWidget {
     return CustomAppBar(
       height: 50.h,
       //leadingWidth: 59.h,
-      leadingWidth: 100.h,
+      leadingWidth: 50.h,
       leading: AppbarLeadingIconButton(
-        imagePath: ImageConstant.back,
+        imagePath: ImageConstant.arrowBack,
         margin: EdgeInsets.only(
           left: 17.h,
           top: 2.h,
@@ -156,7 +156,7 @@ class HomeScreen extends StatelessWidget {
                   width: 50.h,
                   height: 52.h,
                   alignment: Alignment.center,
-                  onTap: () {},
+                  onTap: () => onTapConfiguration(context),
                 ),
                 CustomImageView(
                   imagePath: ImageConstant.image_not_found,
@@ -390,6 +390,7 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildColumndescripti(BuildContext context) {
+    /*
     return Align(
       alignment: Alignment.bottomCenter,
       child: Container(
@@ -418,5 +419,30 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
     );
+  }*/
+    return Container(
+      width: double.maxFinite,
+      padding: EdgeInsets.symmetric(vertical: 14.h),
+      decoration: BoxDecoration(
+        color: appTheme.gray100,
+      ),
+      child: Column(
+        children: [
+          Text(
+            " © 2024 Paso Pacífico & UNAN-Managua, CUR-Carazo. \nTodos los derechos reservados.",
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: CustomTextStyles.bodyMediumGray60001_1.copyWith(
+              height: 1.43,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  onTapConfiguration(BuildContext context) {
+    Navigator.pushNamed(context, AppRoutes.configurationScreen);
   }
 }

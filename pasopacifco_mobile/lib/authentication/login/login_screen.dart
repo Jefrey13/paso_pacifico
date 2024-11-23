@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pasopacifco_mobile/core/app_export.dart';
 import 'package:pasopacifco_mobile/routes/app_routes.dart';
+import 'package:pasopacifco_mobile/widgets/app_bar/app_bar_leading_iconbutton.dart';
+import 'package:pasopacifco_mobile/widgets/app_bar/custom_app_bar.dart';
 import 'package:pasopacifco_mobile/widgets/custom_text_form_field.dart';
 import 'package:pasopacifco_mobile/widgets/custom_elevated_button.dart';
 
@@ -16,11 +18,12 @@ class LoginScreen extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
+        appBar: _buildAppbar(context),
         body: Container(
           width: double.maxFinite,
           padding: EdgeInsets.only(
             left: 8.h,
-            top: 88.h,
+            top: 4.h,
             right: 8.h,
           ),
           child: Column(
@@ -169,6 +172,23 @@ class LoginScreen extends StatelessWidget {
                 ),
               )),
         ],
+      ),
+    );
+  }
+
+  PreferredSizeWidget _buildAppbar(BuildContext context) {
+    return CustomAppBar(
+      height: 50.h,
+      //leadingWidth: 59.h,
+      leadingWidth: 50.h,
+      leading: AppbarLeadingIconButton(
+        imagePath: ImageConstant.arrowBack,
+        margin: EdgeInsets.only(
+          left: 17.h,
+          top: 2.h,
+          bottom: 6.h,
+        ),
+        onTap: () {},
       ),
     );
   }

@@ -32,7 +32,7 @@ class AppBarLeadingIconbuttonTwo extends StatelessWidget {
           padding: EdgeInsets.all(10.h),
           decoration: IconButttonStyleHelper.none,
           child: CustomImageView(
-            imagePath: ImageConstant.back,
+            imagePath: ImageConstant.arrowBack,
           ),
         ),
       ),

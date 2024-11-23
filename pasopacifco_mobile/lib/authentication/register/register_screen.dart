@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pasopacifco_mobile/core/app_export.dart';
 import 'package:pasopacifco_mobile/routes/app_routes.dart';
+import 'package:pasopacifco_mobile/widgets/app_bar/app_bar_leading_iconbutton.dart';
+import 'package:pasopacifco_mobile/widgets/app_bar/custom_app_bar.dart';
 import 'package:pasopacifco_mobile/widgets/custom_text_form_field.dart';
 import 'package:pasopacifco_mobile/widgets/custom_elevated_button.dart';
 
@@ -18,6 +20,7 @@ class RegisterScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: _buildAppbar(context),
         body: Form(
           child: SizedBox(
             width: double.maxFinite,
@@ -26,7 +29,7 @@ class RegisterScreen extends StatelessWidget {
                 width: double.maxFinite,
                 padding: EdgeInsets.only(
                   left: 8.h,
-                  top: 88.h,
+                  top: 4.h,
                   right: 8.h,
                 ),
                 child: Column(
@@ -322,6 +325,23 @@ class RegisterScreen extends StatelessWidget {
       margin: EdgeInsets.only(right: 4.h),
       buttonTextStyle: CustomTextStyles.bodyLargeOnPrimaryContainer,
       onPressed: () => onTapCrearcuenta(context),
+    );
+  }
+
+  PreferredSizeWidget _buildAppbar(BuildContext context) {
+    return CustomAppBar(
+      height: 50.h,
+      //leadingWidth: 59.h,
+      leadingWidth: 50.h,
+      leading: AppbarLeadingIconButton(
+        imagePath: ImageConstant.arrowBack,
+        margin: EdgeInsets.only(
+          left: 17.h,
+          top: 2.h,
+          bottom: 6.h,
+        ),
+        onTap: () {},
+      ),
     );
   }
 

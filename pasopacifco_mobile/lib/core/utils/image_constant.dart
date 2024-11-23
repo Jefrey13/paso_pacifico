@@ -21,4 +21,6 @@ class ImageConstant {
   static String get menu => '$imagePath/menu.png';
   static String get report => '$imagePath/report.png';
   static String get backD => '$imagePath/backD.png';
+  static String get arrow => '$imagePath/arrow.png';
+  static String get arrowBack => '$imagePath/arrowBack.png';
 }
