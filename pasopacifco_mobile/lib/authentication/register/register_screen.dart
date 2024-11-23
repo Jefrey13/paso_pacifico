@@ -8,7 +8,7 @@ import 'package:pasopacifco_mobile/widgets/app_bar/app_bar_leading_iconbutton.da
 import 'package:pasopacifco_mobile/widgets/app_bar/custom_app_bar.dart';
 import 'package:pasopacifco_mobile/widgets/custom_text_form_field.dart';
 import 'package:pasopacifco_mobile/widgets/custom_elevated_button.dart';
-import 'package:pasopacifco_mobile/authentication/services/register_service.dart';
+import 'package:pasopacifco_mobile/authentication/register/services/register_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class RegisterScreen extends StatelessWidget {

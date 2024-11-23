@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pasopacifco_mobile/core/app_export.dart';
 import 'package:pasopacifco_mobile/routes/app_routes.dart';
 import 'package:pasopacifco_mobile/widgets/app_bar/app_bar_leading_iconbutton.dart';
 import 'package:pasopacifco_mobile/widgets/app_bar/custom_app_bar.dart';
 import 'package:pasopacifco_mobile/widgets/custom_text_form_field.dart';
 import 'package:pasopacifco_mobile/widgets/custom_elevated_button.dart';
+import 'package:pasopacifco_mobile/authentication/login/services/login_service.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({Key? key}) : super(key: key);
 
-  final TextEditingController searchoneController = TextEditingController();
-  final TextEditingController interfaceessentController =
-      TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -19,16 +22,19 @@ class LoginScreen extends StatelessWidget {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: _buildAppbar(context),
-        body: Container(
-          width: double.maxFinite,
-          padding: EdgeInsets.only(
-            left: 8.h,
-            top: 4.h,
-            right: 8.h,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [_buildContainer(context)],
+        body: Form(
+          key: _formKey,
+          child: Container(
+            width: double.maxFinite,
+            padding: EdgeInsets.only(
+              left: 8.h,
+              top: 4.h,
+              right: 8.h,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [_buildContainer(context)],
+            ),
           ),
         ),
       ),
@@ -53,7 +59,7 @@ class LoginScreen extends StatelessWidget {
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              "Nombre Usuario",
+              "Correo Electrónico",
               style: CustomTextStyles.bodyMediumGray60001_1,
             ),
           ),
@@ -61,8 +67,8 @@ class LoginScreen extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(right: 6.h),
             child: CustomTextFormField(
-              controller: searchoneController,
-              hintText: "Nombre de Usuario",
+              controller: emailController,
+              hintText: "Correo Electrónico",
               hintStyle: CustomTextStyles.bodyMediumOnPrimary,
               prefix: Container(
                 margin: EdgeInsets.only(
@@ -87,6 +93,16 @@ class LoginScreen extends StatelessWidget {
               ),
               borderDecoration: TextFormFieldStyleHelper.underLineGray,
               filled: false,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'El correo electrónico es obligatorio.';
+                }
+                final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+                if (!emailRegex.hasMatch(value)) {
+                  return 'Por favor, introduce un correo válido.';
+                }
+                return null;
+              },
             ),
           ),
           SizedBox(height: 10.h),
@@ -100,7 +116,7 @@ class LoginScreen extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(right: 6.h),
             child: CustomTextFormField(
-              controller: interfaceessentController,
+              controller: passwordController,
               hintText: "Contraseña",
               hintStyle: CustomTextStyles.bodyMediumOnPrimary,
               textInputAction: TextInputAction.done,
@@ -120,18 +136,6 @@ class LoginScreen extends StatelessWidget {
               prefixConstraints: BoxConstraints(
                 maxHeight: 32.h,
               ),
-              suffix: Container(
-                margin: EdgeInsets.fromLTRB(16.h, 6.h, 20.h, 6.h),
-                child: CustomImageView(
-                  imagePath: ImageConstant.eye,
-                  height: 20.h,
-                  width: 22.h,
-                  fit: BoxFit.contain,
-                ),
-              ),
-              suffixConstraints: BoxConstraints(
-                maxHeight: 32.h,
-              ),
               obscureText: true,
               contentPadding: EdgeInsets.only(
                 top: 6.h,
@@ -140,6 +144,12 @@ class LoginScreen extends StatelessWidget {
               ),
               borderDecoration: TextFormFieldStyleHelper.underLineGray,
               filled: false,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'La contraseña es obligatoria.';
+                }
+                return null;
+              },
             ),
           ),
           SizedBox(height: 22.h),
@@ -147,9 +157,7 @@ class LoginScreen extends StatelessWidget {
             text: "Iniciar Sesion",
             margin: EdgeInsets.only(right: 2.h),
             buttonTextStyle: CustomTextStyles.bodyLargeOnPrimaryContainer,
-            onPressed: () {
-              Navigator.pushNamed(context, AppRoutes.homeScreen);
-            },
+            onPressed: () => _loginUser(context),
           ),
           SizedBox(height: 24.h),
           GestureDetector(
@@ -176,10 +184,54 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
+  Future<void> _loginUser(BuildContext context) async {
+    if (!_formKey.currentState!.validate()) {
+      Fluttertoast.showToast(
+        msg: "Por favor, llena todos los campos correctamente.",
+        backgroundColor: Colors.red,
+        gravity: ToastGravity.BOTTOM,
+        textColor: Colors.white,
+        fontSize: 16.0,
+        toastLength: Toast.LENGTH_SHORT,
+      );
+      return;
+    }
+
+    try {
+      final loginService = LoginService();
+
+      final user = await loginService.loginUser(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      if (user != null) {
+        Fluttertoast.showToast(
+          msg: "Inicio de sesión exitoso. Bienvenido, ${user.email}!",
+          backgroundColor: Colors.green,
+          gravity: ToastGravity.BOTTOM,
+          textColor: Colors.white,
+          fontSize: 16.0,
+          toastLength: Toast.LENGTH_SHORT,
+        );
+        Navigator.pushNamed(context, AppRoutes.homeScreen);
+      }
+    } catch (e) {
+      String errorMessage = e.toString().replaceFirst('Exception: ', '');
+      Fluttertoast.showToast(
+        msg: errorMessage,
+        backgroundColor: Colors.red,
+        gravity: ToastGravity.BOTTOM,
+        textColor: Colors.white,
+        fontSize: 16.0,
+        toastLength: Toast.LENGTH_SHORT,
+      );
+    }
+  }
+
   PreferredSizeWidget _buildAppbar(BuildContext context) {
     return CustomAppBar(
       height: 50.h,
-      //leadingWidth: 59.h,
       leadingWidth: 50.h,
       leading: AppbarLeadingIconButton(
         imagePath: ImageConstant.arrowBack,
@@ -188,17 +240,11 @@ class LoginScreen extends StatelessWidget {
           top: 2.h,
           bottom: 6.h,
         ),
-        onTap: () {},
+        onTap: () => Navigator.pop(context),
       ),
     );
   }
 
-  /// Navigates to the homeScreen when the action is triggered.
-  //onTapInciarsesion(BuildContext context) {
-  //Navigator.pushNamed(context, AppRoutes.homeScreen);
-  //}
-
-  /// Navigates to the crearCuentaScreen when the action is triggered.
   onTapTxtAnnotienescuenta(BuildContext context) {
     Navigator.pushNamed(context, AppRoutes.registerScreen);
   }

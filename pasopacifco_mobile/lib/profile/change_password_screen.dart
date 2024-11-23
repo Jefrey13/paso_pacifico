@@ -5,6 +5,8 @@ import 'package:pasopacifco_mobile/widgets/app_bar/custom_app_bar.dart';
 import 'package:pasopacifco_mobile/widgets/custom_elevated_button.dart';
 import 'package:pasopacifco_mobile/widgets/custom_text_form_field.dart';
 import 'package:pasopacifco_mobile/widgets/app_bar/app_bar_leading_iconbutton.dart';
+import 'package:pasopacifco_mobile/profile/services/change_password_service.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ChangePasswordScreen extends StatelessWidget {
   ChangePasswordScreen({Key? key}) : super(key: key);
@@ -142,7 +144,7 @@ class ChangePasswordScreen extends StatelessWidget {
   Widget _buildCambiar(BuildContext context) {
     return CustomElevatedButton(
       text: "Cambiar Contraseña",
-      onPressed: () {},
+      onPressed: () => _changePassword(context),
     );
   }
 
@@ -202,5 +204,71 @@ class ChangePasswordScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _changePassword(BuildContext context) async {
+    // Verifica si el formulario es válido
+    if (!_formKey.currentState!.validate()) {
+      Fluttertoast.showToast(
+        msg: "Por favor llena todos los campos correctamente.",
+        backgroundColor: Colors.red,
+        gravity: ToastGravity.BOTTOM,
+        textColor: Colors.white,
+        fontSize: 16.0,
+        toastLength: Toast.LENGTH_SHORT,
+      );
+      return;
+    }
+    // Captura los valores de las contraseñas
+
+    final currentPassword = passwordController.text;
+    final newPassword = passwordoneController.text;
+    final confirmPassword = passwordtwoController.text;
+
+    // Valida que la nueva contraseña y su confirmación coincidan
+    if (newPassword != confirmPassword) {
+      Fluttertoast.showToast(
+        msg: "Las nuevas contraseñas no coinciden.",
+        backgroundColor: Colors.red,
+        gravity: ToastGravity.BOTTOM,
+        textColor: Colors.white,
+        fontSize: 16.0,
+        toastLength: Toast.LENGTH_SHORT,
+      );
+      return;
+    }
+
+    // Llama al servicio de cambio de contraseña
+    final changePasswordService = ChangePasswordService();
+
+    try {
+      await changePasswordService.changePassword(
+        currentPassword: currentPassword,
+        newPassword: newPassword,
+      );
+
+      // Muestra un mensaje de éxito
+      Fluttertoast.showToast(
+        msg: "Contraseña actualizada exitosamente.",
+        backgroundColor: Colors.green,
+        gravity: ToastGravity.BOTTOM,
+        textColor: Colors.white,
+        fontSize: 16.0,
+        toastLength: Toast.LENGTH_SHORT,
+      );
+
+      Navigator.pop(context);
+    } catch (e) {
+      // Manejo de errores
+      String errorMessage = e.toString().replaceFirst('Exception: ', '');
+      Fluttertoast.showToast(
+        msg: errorMessage,
+        backgroundColor: Colors.red,
+        gravity: ToastGravity.BOTTOM,
+        textColor: Colors.white,
+        fontSize: 16.0,
+        toastLength: Toast.LENGTH_SHORT,
+      );
+    }
   }
 }
