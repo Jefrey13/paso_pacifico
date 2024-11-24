@@ -11,8 +11,14 @@ import 'package:pasopacifco_mobile/profile/profile_screen.dart';
 import 'package:pasopacifco_mobile/sites/site_management_screen.dart';
 import 'package:pasopacifco_mobile/sites/add_site_location_screen.dart';
 import 'package:pasopacifco_mobile/sites/edit_site_location_screen.dart';
+import 'package:pasopacifco_mobile/waste/waste_management_screen.dart';
+import 'package:pasopacifco_mobile/waste/add_waste_screen.dart';
+import 'package:pasopacifco_mobile/waste/edit_waste_screen.dart';
 
 class AppRoutes {
+  static const String editWasteScreen = '/editWasteScreen';
+  static const String addWasteScreen = '/addWasteScreen';
+  static const String wasteManagementScreen = '/wasteManagementScreen';
   static const String editSiteLocationScreen = '/editSiteLocationScreen';
   static const String addSiteLocationScreen = '/addSiteLocationScreen';
   static const String siteManagementScreen = '/siteManagementScreen';
@@ -28,6 +34,9 @@ class AppRoutes {
   static const String profileScreen = '/profileScreen';
 
   static Map<String, WidgetBuilder> routes = {
+    editWasteScreen: (context) => EditWasteScreen(),
+    addWasteScreen: (context) => AddWasteScreen(),
+    wasteManagementScreen: (context) => WasteManagementScreen(),
     editSiteLocationScreen: (context) => EditSiteLocationScreen(),
     addSiteLocationScreen: (context) => AddSiteLocationScreen(),
     siteManagementScreen: (context) => SiteManagementScreen(),

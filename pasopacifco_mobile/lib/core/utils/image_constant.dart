@@ -28,4 +28,7 @@ class ImageConstant {
   static String get confetti => '$imagePath/confetti.png';
   static String get arrowdown => '$imagePath/arrowdown.png';
   static String get vector => '$imagePath/vector.png';
+  static String get resize => '$imagePath/resize.png';
+  static String get button => '$imagePath/button.png';
+  static String get search => '$imagePath/search.png';
 }

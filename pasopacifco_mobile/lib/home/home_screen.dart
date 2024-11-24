@@ -374,7 +374,8 @@ class HomeScreen extends StatelessWidget {
                             onTapColumngestin: () => onTapSites(context),
                           );
                         case 2:
-                          return HomeThreeItemWidget(onTapColumntrash: () {});
+                          return HomeThreeItemWidget(
+                              onTapColumntrash: () => onTapWaste(context));
                         case 3:
                           return HomeFourItemWidget(onTapColumnreports: () {});
                         default:
@@ -450,5 +451,9 @@ class HomeScreen extends StatelessWidget {
 
   onTapSites(BuildContext context) {
     Navigator.pushNamed(context, AppRoutes.siteManagementScreen);
+  }
+
+  onTapWaste(BuildContext context) {
+    Navigator.pushNamed(context, AppRoutes.wasteManagementScreen);
   }
 }
