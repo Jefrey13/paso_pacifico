@@ -82,7 +82,7 @@ class ConfigurationScreen extends StatelessWidget {
     return SizedBox(
       width: double.maxFinite,
       child: GestureDetector(
-        onTap: () {},
+        onTap: () => onTapProfile(context),
         child: SizedBox(
           width: double.maxFinite,
           child: Column(
@@ -193,5 +193,9 @@ class ConfigurationScreen extends StatelessWidget {
 
   onTapTermsAndConditions(BuildContext context) {
     Navigator.pushNamed(context, AppRoutes.termsScreen);
+  }
+
+  onTapProfile(BuildContext context) {
+    Navigator.pushNamed(context, AppRoutes.profileScreen);
   }
 }

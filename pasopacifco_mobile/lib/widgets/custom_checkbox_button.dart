@@ -22,12 +22,12 @@ class CustomCheckboxButton extends StatelessWidget {
 
   CustomCheckboxButton(
       {Key? key,
+      required this.onChange,
       this.decoration,
       this.alignment,
       this.isRightCheck,
       this.iconSize,
       this.value,
-      required this.onChange,
       this.text,
       this.width,
       this.padding,
@@ -58,6 +58,7 @@ class CustomCheckboxButton extends StatelessWidget {
           child: (isRightCheck ?? false) ? rightSideCheckbox : leftSideCheckbox,
         ),
       );
+
   Widget get leftSideCheckbox => Row(
         mainAxisSize: MainAxisSize.min,
         children: [

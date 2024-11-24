@@ -7,8 +7,15 @@ import 'package:pasopacifco_mobile/home/home_screen.dart';
 import 'package:pasopacifco_mobile/profile/configuration_screen.dart';
 import 'package:pasopacifco_mobile/profile/change_password_screen.dart';
 import 'package:pasopacifco_mobile/profile/terms_screen.dart';
+import 'package:pasopacifco_mobile/profile/profile_screen.dart';
+import 'package:pasopacifco_mobile/sites/site_management_screen.dart';
+import 'package:pasopacifco_mobile/sites/add_site_location_screen.dart';
+import 'package:pasopacifco_mobile/sites/edit_site_location_screen.dart';
 
 class AppRoutes {
+  static const String editSiteLocationScreen = '/editSiteLocationScreen';
+  static const String addSiteLocationScreen = '/addSiteLocationScreen';
+  static const String siteManagementScreen = '/siteManagementScreen';
   static const String splashScreen = '/splashScreen';
   static const String welcomeScreen = '/welcomeScreen';
   static const String initialRoute = '/initialRoute';
@@ -18,8 +25,13 @@ class AppRoutes {
   static const String configurationScreen = '/configurationScreen';
   static const String changePasswordScreen = '/changePasswordScreen';
   static const String termsScreen = '/termsScreen';
+  static const String profileScreen = '/profileScreen';
 
   static Map<String, WidgetBuilder> routes = {
+    editSiteLocationScreen: (context) => EditSiteLocationScreen(),
+    addSiteLocationScreen: (context) => AddSiteLocationScreen(),
+    siteManagementScreen: (context) => SiteManagementScreen(),
+    profileScreen: (context) => ProfileScreen(),
     termsScreen: (context) => TermsScreen(),
     changePasswordScreen: (context) => ChangePasswordScreen(),
     configurationScreen: (context) => ConfigurationScreen(),

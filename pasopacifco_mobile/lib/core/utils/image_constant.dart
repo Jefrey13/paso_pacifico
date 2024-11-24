@@ -23,4 +23,9 @@ class ImageConstant {
   static String get backD => '$imagePath/backD.png';
   static String get arrow => '$imagePath/arrow.png';
   static String get arrowBack => '$imagePath/arrowBack.png';
+  static String get profile => '$imagePath/profile.png';
+  static String get pen => '$imagePath/pen.png';
+  static String get confetti => '$imagePath/confetti.png';
+  static String get arrowdown => '$imagePath/arrowdown.png';
+  static String get vector => '$imagePath/vector.png';
 }
