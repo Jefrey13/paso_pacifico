@@ -377,7 +377,8 @@ class HomeScreen extends StatelessWidget {
                           return HomeThreeItemWidget(
                               onTapColumntrash: () => onTapWaste(context));
                         case 3:
-                          return HomeFourItemWidget(onTapColumnreports: () {});
+                          return HomeFourItemWidget(
+                              onTapColumnreports: () => onTapReports(context));
                         default:
                           return Container();
                       }
@@ -455,5 +456,9 @@ class HomeScreen extends StatelessWidget {
 
   onTapWaste(BuildContext context) {
     Navigator.pushNamed(context, AppRoutes.wasteManagementScreen);
+  }
+
+  onTapReports(BuildContext context) {
+    Navigator.pushNamed(context, AppRoutes.reportManagementScreen);
   }
 }

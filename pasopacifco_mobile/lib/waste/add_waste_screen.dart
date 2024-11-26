@@ -146,12 +146,12 @@ class AddWasteScreen extends StatelessWidget {
             textInputAction: TextInputAction.done,
             suffix: Container(
               margin: EdgeInsets.fromLTRB(12.h, 4.h, 2.h, 4.h),
-              child: CustomImageView(
-                imagePath: ImageConstant.resize,
-                height: 8.h,
-                width: 8.h,
-                fit: BoxFit.contain,
-              ),
+              //child: CustomImageView(
+              //imagePath: ImageConstant.resize,
+              //height: 8.h,
+              //width: 8.h,
+              //fit: BoxFit.contain,
+              //),
             ),
             suffixConstraints: BoxConstraints(
               maxHeight: 150.h,

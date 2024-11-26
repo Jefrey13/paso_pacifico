@@ -14,8 +14,27 @@ import 'package:pasopacifco_mobile/sites/edit_site_location_screen.dart';
 import 'package:pasopacifco_mobile/waste/waste_management_screen.dart';
 import 'package:pasopacifco_mobile/waste/add_waste_screen.dart';
 import 'package:pasopacifco_mobile/waste/edit_waste_screen.dart';
+import 'package:pasopacifco_mobile/reports/report_management_screen.dart';
+import 'package:pasopacifco_mobile/reports/foundobject/found_object_screen.dart';
+import 'package:pasopacifco_mobile/reports/foundobject/add_found_object_screen.dart';
+import 'package:pasopacifco_mobile/reports/fishingvessels/fishing_vessels_screen.dart';
+import 'package:pasopacifco_mobile/reports/fishingvessels/add_fishing_vessels_screen.dart';
+import 'package:pasopacifco_mobile/reports/packaging/packaging_screen.dart';
+import 'package:pasopacifco_mobile/reports/packaging/add_packaging_screen.dart';
+import 'package:pasopacifco_mobile/reports/sitedescription/environment_screen.dart';
+import 'package:pasopacifco_mobile/reports/sitedescription/site_location_screen.dart';
 
 class AppRoutes {
+  static const String siteLocationScreen = '/siteLocationScreen';
+  static const String environmentScreen = '/environmentScreen';
+  static const String addPackagingScreen = '/addPackagingScreen';
+  static const String packagingScreen = '/packagingScreen';
+  static const String addFishingVesselsScreen = '/addFishingVesselsScreen';
+  static const String fishingVesselsScreen = '/fishingVesselsScreen';
+  static const String addFoundObjectScreen = '/addFoundObjectScreen';
+  static const String foundObjectScreen = '/foundObjectScreen';
+  static const String reportManagementScreen = '/reportManagementScreen';
+  static const String ropo = '/editWasteScreen';
   static const String editWasteScreen = '/editWasteScreen';
   static const String addWasteScreen = '/addWasteScreen';
   static const String wasteManagementScreen = '/wasteManagementScreen';
@@ -34,6 +53,15 @@ class AppRoutes {
   static const String profileScreen = '/profileScreen';
 
   static Map<String, WidgetBuilder> routes = {
+    siteLocationScreen: (context) => SiteLocationScreen(),
+    environmentScreen: (context) => EnvironmentScreen(),
+    addPackagingScreen: (context) => AddPackagingScreen(),
+    packagingScreen: (context) => PackagingScreen(),
+    addFishingVesselsScreen: (context) => AddFishingVesselsScreen(),
+    fishingVesselsScreen: (context) => FishingVesselsScreen(),
+    addFoundObjectScreen: (context) => AddFoundObjectScreen(),
+    foundObjectScreen: (context) => FoundObjectScreen(),
+    reportManagementScreen: (context) => ReportManagementScreen(),
     editWasteScreen: (context) => EditWasteScreen(),
     addWasteScreen: (context) => AddWasteScreen(),
     wasteManagementScreen: (context) => WasteManagementScreen(),
