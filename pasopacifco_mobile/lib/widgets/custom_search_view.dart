@@ -110,7 +110,7 @@ class CustomSearchView extends StatelessWidget {
             Container(
               margin: EdgeInsets.fromLTRB(16, 14, 12, 14),
               child: Image.asset(
-                ImageConstant.image_not_found,
+                ImageConstant.search,
                 height: 18,
                 width: 18,
               ),
