@@ -1,38 +1,99 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pasopacifco_mobile/core/app_export.dart';
 import 'package:pasopacifco_mobile/routes/app_routes.dart';
+import 'package:pasopacifco_mobile/sites/models/Site.dart';
+import 'package:pasopacifco_mobile/sites/services/location_service.dart';
+import 'package:pasopacifco_mobile/sites/services/site_service.dart';
 import 'package:pasopacifco_mobile/sites/widgets/management_elements_widget.dart';
 import 'package:pasopacifco_mobile/theme/custom_button_style.dart';
-import 'package:pasopacifco_mobile/widgets/app_bar/appbar_title.dart';
-import 'package:pasopacifco_mobile/widgets/app_bar/custom_app_bar.dart';
-import 'package:pasopacifco_mobile/widgets/custom_checkbox_button.dart';
-import 'package:pasopacifco_mobile/widgets/custom_drop_dowm.dart';
+import 'package:pasopacifco_mobile/theme/custom_text_style.dart';
 import 'package:pasopacifco_mobile/widgets/custom_elevated_button.dart';
-import 'package:pasopacifco_mobile/widgets/custom_text_form_field.dart';
-import 'package:pasopacifco_mobile/widgets/app_bar/app_bar_leading_iconbutton.dart';
-import 'package:path/path.dart';
 
-class SiteManagementScreen extends StatelessWidget {
+class SiteManagementScreen extends StatefulWidget {
   SiteManagementScreen({Key? key}) : super(key: key);
+
+  @override
+  _SiteManagementScreenState createState() => _SiteManagementScreenState();
+}
+
+class _SiteManagementScreenState extends State<SiteManagementScreen> {
+  final SiteService _siteService = SiteService();
+  final LocationService _locationService =
+      LocationService(); // Para buscar nombres
+  List<Site> _sites = [];
+  Map<String, String> _departmentNames =
+      {}; // Cache de nombres de departamentos
+  Map<String, String> _municipalityNames = {}; // Cache de nombres de municipios
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchSites();
+  }
+
+  /// Método para obtener sitios activos y sus nombres
+  Future<void> _fetchSites() async {
+    setState(() => _isLoading = true);
+    try {
+      final sites = await _siteService.getAllActiveSites();
+      await _loadDepartmentAndMunicipalityNames(sites);
+
+      setState(() {
+        _sites = sites;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() => _isLoading = false);
+      Fluttertoast.showToast(
+        msg: "Error al cargar sitios: $e",
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+        gravity: ToastGravity.BOTTOM,
+      );
+    }
+  }
+
+  /// Método para cargar nombres de departamentos y municipios
+  Future<void> _loadDepartmentAndMunicipalityNames(List<Site> sites) async {
+    for (var site in sites) {
+      if (!_departmentNames.containsKey(site.departmentId)) {
+        try {
+          final department =
+              await _locationService.getDepartmentById(site.departmentId);
+          _departmentNames[site.departmentId] = department.name;
+        } catch (e) {
+          _departmentNames[site.departmentId] = "Desconocido";
+        }
+      }
+      if (!_municipalityNames.containsKey(site.municipalityId)) {
+        try {
+          final municipality =
+              await _locationService.getMunicipalityById(site.municipalityId);
+          _municipalityNames[site.municipalityId] = municipality.name;
+        } catch (e) {
+          _municipalityNames[site.municipalityId] = "Desconocido";
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: _buildAppbar(context),
-        body: Container(
-          width: double.maxFinite,
-          padding: EdgeInsets.only(
-            left: 16.h,
-            right: 6.h,
-            top: 16.h,
-          ),
+        appBar: _buildAppbar(),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
           child: Column(
-            mainAxisSize: MainAxisSize.max,
             children: [
               _buildAgregar(context),
-              SizedBox(height: 22.h),
-              _buildGestinde(context)
+              SizedBox(height: 22.0),
+              _isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : _buildListView(),
             ],
           ),
         ),
@@ -40,63 +101,47 @@ class SiteManagementScreen extends StatelessWidget {
     );
   }
 
-  PreferredSizeWidget _buildAppbar(BuildContext context) {
-    return CustomAppBar(
-      leadingWidth: 62.h,
-      leading: AppbarLeadingIconButton(
-        imagePath: ImageConstant.arrowBack,
-        margin: EdgeInsets.only(
-          left: 20.h,
-          top: 7.h,
-          bottom: 7.h,
-        ),
-        onTap: () {},
-      ),
+  PreferredSizeWidget _buildAppbar() {
+    return AppBar(
+      title: Text("Gestión de sitios"),
       centerTitle: true,
-      title: AppbarTitle(
-        text: "Gestión de sitios",
-      ),
     );
   }
 
   Widget _buildAgregar(BuildContext context) {
-    return CustomElevatedButton(
-      height: 36.h,
-      width: 82.h,
-      text: "Agregar",
-      onPressed: () {
-        Navigator.pushNamed(context, AppRoutes.addSiteLocationScreen);
-      },
+    return Align(
       alignment: Alignment.centerRight,
-    );
-  }
-
-  Widget _buildGestinde(BuildContext context) {
-    return Expanded(
-      child: Padding(
-        padding: EdgeInsets.only(
-          left: 20.h,
-          right: 12.h,
-        ),
-        child: ListView.separated(
-          padding: EdgeInsets.zero,
-          physics: BouncingScrollPhysics(),
-          shrinkWrap: true,
-          separatorBuilder: (context, index) {
-            return SizedBox(
-              height: 14.h,
-            );
-          },
-          itemCount: 4,
-          itemBuilder: (context, index) {
-            return ManagementElementsWidget();
-          },
-        ),
+      child: CustomElevatedButton(
+        height: 36.h,
+        width: 100.h,
+        buttonStyle: CustomButtonStyles.fillPrimaryTL10,
+        buttonTextStyle:
+            CustomTextStyles.bodyMediumLeagueSpartanOnPrimaryContainer,
+        alignment: Alignment.centerRight,
+        onPressed: () {
+          Navigator.pushNamed(context, AppRoutes.addSiteLocationScreen);
+        },
+        text: "Agregar Sitio",
       ),
     );
   }
 
-  onTapAddSite(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.addSiteLocationScreen);
+  Widget _buildListView() {
+    return Expanded(
+      child: ListView.separated(
+        separatorBuilder: (context, index) => SizedBox(height: 14.0),
+        itemCount: _sites.length,
+        itemBuilder: (context, index) {
+          final site = _sites[index];
+          return ManagementElementsWidget(
+            site: site,
+            departmentName:
+                _departmentNames[site.departmentId] ?? "Desconocido",
+            municipalityName:
+                _municipalityNames[site.municipalityId] ?? "Desconocido",
+          );
+        },
+      ),
+    );
   }
 }

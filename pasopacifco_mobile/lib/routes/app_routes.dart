@@ -11,6 +11,7 @@ import 'package:pasopacifco_mobile/profile/profile_screen.dart';
 import 'package:pasopacifco_mobile/sites/site_management_screen.dart';
 import 'package:pasopacifco_mobile/sites/add_site_location_screen.dart';
 import 'package:pasopacifco_mobile/sites/edit_site_location_screen.dart';
+import 'package:pasopacifco_mobile/sites/models/Site.dart';
 
 class AppRoutes {
   static const String editSiteLocationScreen = '/editSiteLocationScreen';
@@ -28,7 +29,11 @@ class AppRoutes {
   static const String profileScreen = '/profileScreen';
 
   static Map<String, WidgetBuilder> routes = {
-    editSiteLocationScreen: (context) => EditSiteLocationScreen(),
+    //editSiteLocationScreen: (context) => EditSiteLocationScreen(),
+    editSiteLocationScreen: (context) {
+      final site = ModalRoute.of(context)?.settings.arguments as Site;
+      return EditSiteLocationScreen(site: site);
+    },
     addSiteLocationScreen: (context) => AddSiteLocationScreen(),
     siteManagementScreen: (context) => SiteManagementScreen(),
     profileScreen: (context) => ProfileScreen(),

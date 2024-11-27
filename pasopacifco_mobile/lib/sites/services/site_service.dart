@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/site.dart';
+import 'package:pasopacifco_mobile/sites/models/Site.dart';
 
 class SiteService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

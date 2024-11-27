@@ -5,6 +5,8 @@ import 'package:pasopacifco_mobile/core/app_export.dart';
 import 'package:pasopacifco_mobile/routes/app_routes.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pasopacifco_mobile/sites/models/Department.dart';
+import 'package:pasopacifco_mobile/sites/models/Municipality.dart';
 
 var globalMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
@@ -14,7 +16,7 @@ void main() async {
   await Firebase.initializeApp();
 
   // Llama a la función para agregar datos, pero solo si no existen
-  //await addDepartmentsWithSeaAccessToFirestore();
+  //await addDepartmentsAndMunicipalitiesToFirestore();
 
   runApp(MyApp());
 }
@@ -78,28 +80,42 @@ Future<void> addDepartmentsAndMunicipalitiesToFirestore() async {
 
   try {
     for (final departmentName in departmentsWithMunicipalities.keys) {
-      // Agregar departamento a la colección 'departments'
-      final departmentRef = await firestore.collection("departments").add({
-        "name": departmentName,
-        "country": "Nicaragua",
-        "state": "active", // Estado del departamento
-        "hasSeaAccess": true, // Acceso al mar (ejemplo)
-        "createdAt": FieldValue.serverTimestamp(),
-      });
+      // Crear el modelo de departamento
+      final department = Department(
+        id: '', // ID se genera automáticamente en Firestore
+        name: departmentName,
+        country: "Nicaragua",
+        hasSeaAccess: true, // Acceso al mar
+        state: true, // Activo
+        createdAt: DateTime.now(), // Fecha de creación
+      );
+
+      // Guardar el departamento en Firestore
+      final departmentRef = await firestore
+          .collection("departments")
+          .add(department.toFirestore());
 
       print(
           "Departamento '$departmentName' agregado con ID: ${departmentRef.id}");
 
-      // Agregar municipios correspondientes a la colección 'municipalities'
+      // Obtener los municipios del departamento
       final municipalities = departmentsWithMunicipalities[departmentName]!;
+
       for (final municipalityName in municipalities) {
-        await firestore.collection("municipalities").add({
-          "name": municipalityName,
-          "departmentId": departmentRef.id, // Relación con el departamento
-          "state": "active", // Estado del municipio
-          "hasSeaAccess": true, // Acceso al mar (si aplica)
-          "createdAt": FieldValue.serverTimestamp(),
-        });
+        // Crear el modelo de municipio
+        final municipality = Municipality(
+          id: '', // ID se genera automáticamente en Firestore
+          name: municipalityName,
+          departmentId: departmentRef.id, // Relación con el departamento
+          hasSeaAccess: true, // Acceso al mar (si aplica)
+          state: true, // Activo
+          createdAt: DateTime.now(), // Fecha de creación
+        );
+
+        // Guardar el municipio en Firestore
+        await firestore
+            .collection("municipalities")
+            .add(municipality.toFirestore());
 
         print(
             "Municipio '$municipalityName' agregado al departamento '$departmentName'.");

@@ -1,316 +1,398 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pasopacifco_mobile/core/app_export.dart';
-import 'package:pasopacifco_mobile/routes/app_routes.dart';
+import 'package:pasopacifco_mobile/sites/models/Department.dart';
+import 'package:pasopacifco_mobile/sites/models/Municipality.dart';
+import 'package:pasopacifco_mobile/sites/models/Site.dart';
+import 'package:pasopacifco_mobile/sites/services/location_service.dart';
+import 'package:pasopacifco_mobile/sites/services/site_service.dart';
 import 'package:pasopacifco_mobile/theme/custom_button_style.dart';
-import 'package:pasopacifco_mobile/widgets/app_bar/appbar_title.dart';
-import 'package:pasopacifco_mobile/widgets/app_bar/custom_app_bar.dart';
+import 'package:pasopacifco_mobile/theme/custom_text_style.dart';
 import 'package:pasopacifco_mobile/widgets/custom_checkbox_button.dart';
-import 'package:pasopacifco_mobile/widgets/custom_drop_dowm.dart';
 import 'package:pasopacifco_mobile/widgets/custom_elevated_button.dart';
-import 'package:pasopacifco_mobile/widgets/custom_text_form_field.dart';
-import 'package:pasopacifco_mobile/widgets/app_bar/app_bar_leading_iconbutton.dart';
-import 'package:path/path.dart';
 
-class EditSiteLocationScreen extends StatelessWidget {
-  EditSiteLocationScreen({Key? key}) : super(key: key);
+class EditSiteLocationScreen extends StatefulWidget {
+  final Site site; // Recibe el sitio a editar
+  EditSiteLocationScreen({Key? key, required this.site}) : super(key: key);
 
-  TextEditingController inputinneroneController = TextEditingController();
-  TextEditingController inputinnerController = TextEditingController();
-  List<String> dropdownItemList = ["Item One", "Item Two", "Item Three"];
-  List<String> dropdownItemList1 = ["Item One", "Item Two", "Item Three"];
-  TextEditingController countryController = TextEditingController();
-  bool terrestreone = true;
-  bool embarcacinone = true;
-  bool submarinaone = true;
+  @override
+  _EditSiteLocationScreenState createState() => _EditSiteLocationScreenState();
+}
+
+class _EditSiteLocationScreenState extends State<EditSiteLocationScreen> {
+  // Controladores de texto
+  late TextEditingController nameController;
+  late TextEditingController crossingController;
+
+  // Datos dinámicos
+  List<Department> departments = [];
+  List<Municipality> municipalities = [];
+  Department? selectedDepartment;
+  Municipality? selectedMunicipality;
+
+  // Estados de carga
+  bool isLoadingDepartments = true;
+  bool isLoadingMunicipalities = false;
+
+  // Checkbox values
+  bool terrestreone = false;
+  bool embarcacinone = false;
+  bool submarinaone = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Inicializar controladores con los datos del sitio
+    nameController = TextEditingController(text: widget.site.name);
+    crossingController =
+        TextEditingController(text: widget.site.closestCrossing);
+
+    // Inicializar modalidades de limpieza
+    terrestreone = widget.site.cleaningModes.contains("Terrestre");
+    embarcacinone = widget.site.cleaningModes.contains("Embarcación");
+    submarinaone = widget.site.cleaningModes.contains("Submarina");
+
+    // Cargar departamentos y municipios
+    fetchDepartments();
+    fetchMunicipalities(widget.site.departmentId);
+  }
+
+  /// Cargar departamentos desde Firestore
+  Future<void> fetchDepartments() async {
+    setState(() {
+      isLoadingDepartments = true;
+    });
+    try {
+      final locationService = LocationService();
+      final fetchedDepartments = await locationService.getAllDepartments();
+      setState(() {
+        departments = fetchedDepartments;
+        selectedDepartment = departments.firstWhere(
+          (dept) => dept.id == widget.site.departmentId,
+        );
+        isLoadingDepartments = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoadingDepartments = false;
+      });
+      Fluttertoast.showToast(
+        msg: "Error al cargar departamentos.",
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    }
+  }
+
+  /// Cargar municipios basados en el departamento seleccionado
+  Future<void> fetchMunicipalities(String departmentId) async {
+    setState(() {
+      isLoadingMunicipalities = true;
+    });
+    try {
+      final locationService = LocationService();
+      final fetchedMunicipalities =
+          await locationService.getMunicipalitiesByDepartment(departmentId);
+      setState(() {
+        municipalities = fetchedMunicipalities;
+        selectedMunicipality = municipalities.firstWhere(
+          (mun) => mun.id == widget.site.municipalityId,
+        );
+        isLoadingMunicipalities = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoadingMunicipalities = false;
+      });
+      Fluttertoast.showToast(
+        msg: "Error al cargar municipios.",
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    }
+  }
+
+  /// Validar inputs antes de guardar cambios
+  bool validateInputs() {
+    if (nameController.text.trim().isEmpty) {
+      Fluttertoast.showToast(
+        msg: "El nombre del sitio no puede estar vacío.",
+        backgroundColor: Colors.orange,
+        textColor: Colors.white,
+      );
+      return false;
+    }
+
+    if (crossingController.text.trim().isEmpty) {
+      Fluttertoast.showToast(
+        msg: "El cruce más cercano no puede estar vacío.",
+        backgroundColor: Colors.orange,
+        textColor: Colors.white,
+      );
+      return false;
+    }
+
+    if (selectedDepartment == null || selectedMunicipality == null) {
+      Fluttertoast.showToast(
+        msg: "Selecciona un departamento y un municipio.",
+        backgroundColor: Colors.orange,
+        textColor: Colors.white,
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+  /// Actualizar el sitio
+  Future<void> updateSite() async {
+    if (!validateInputs()) return;
+
+    try {
+      final updatedSite = Site(
+        id: widget.site.id,
+        name: nameController.text.trim(),
+        closestCrossing: crossingController.text.trim(),
+        departmentId: selectedDepartment!.id,
+        municipalityId: selectedMunicipality!.id,
+        cleaningModes: [
+          if (terrestreone) "Terrestre",
+          if (embarcacinone) "Embarcación",
+          if (submarinaone) "Submarina",
+        ],
+        state: widget.site.state,
+        country: "Nicaragua",
+        createdAt: widget.site.createdAt,
+      );
+
+      final siteService = SiteService();
+      await siteService.updateSite(widget.site.id, updatedSite);
+
+      Fluttertoast.showToast(
+        msg: "Sitio actualizado exitosamente.",
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+      );
+
+      Navigator.pop(context);
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: "Error al actualizar el sitio.",
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    }
+  }
+
+  /// Desactivar el sitio
+  Future<void> deactivateSite() async {
+    try {
+      final siteService = SiteService();
+      await siteService.toggleSiteState(widget.site.id, false);
+
+      Fluttertoast.showToast(
+        msg: "Sitio desactivado exitosamente.",
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+      );
+
+      Navigator.pop(context);
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: "Error al desactivar el sitio.",
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: _buildAppbar(context),
-        body: SizedBox(
-          width: double.maxFinite,
-          child: SingleChildScrollView(
-            child: Container(
-              width: double.maxFinite,
-              padding: EdgeInsets.symmetric(
-                horizontal: 4.h,
+        appBar: AppBar(
+          title: Text("Editar Sitio"),
+          centerTitle: true,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ),
+        body: SingleChildScrollView(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildInput(context, "Sitio", nameController, "Nombre del sitio"),
+              SizedBox(height: 16.0),
+              _buildInput(context, "Cruce más cercano", crossingController,
+                  "Nombre del cruce"),
+              SizedBox(height: 16.0),
+              _buildDropdown(
+                "Departamento",
+                departments,
+                selectedDepartment,
+                (value) {
+                  setState(() {
+                    selectedDepartment = value;
+                    fetchMunicipalities(selectedDepartment!.id);
+                  });
+                },
+                isLoadingDepartments,
               ),
-              child: Column(
-                children: [
-                  Container(
-                    width: double.maxFinite,
-                    margin: EdgeInsets.only(
-                      left: 12.h,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Detalles del Sitio Seleccionado",
-                          style: CustomTextStyles.titleSmallBlack90001,
-                        ),
-                        SizedBox(height: 16.h),
-                        _buildInput(context),
-                        SizedBox(height: 16.h),
-                        _buildInputone(context),
-                        SizedBox(height: 16.h),
-                        Text(
-                          "Departamento",
-                          style: theme.textTheme.bodyLarge,
-                        ),
-                        SizedBox(height: 16.h),
-                        Padding(
-                          padding: EdgeInsets.only(right: 12.h),
-                          child: CustomDropDown(
-                            icon: Container(
-                              margin: EdgeInsets.only(left: 16.h),
-                              child: CustomImageView(
-                                imagePath: ImageConstant.arrowdown,
-                                height: 18.h,
-                                width: 24.h,
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                            iconSize: 18.h,
-                            hintText: "Seleccionar",
-                            items: dropdownItemList,
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 12.h, vertical: 14.h),
-                          ),
-                        ),
-                        SizedBox(height: 16.h),
-                        Text(
-                          "Municipio",
-                          style: theme.textTheme.bodyLarge,
-                        ),
-                        SizedBox(height: 16.h),
-                        Padding(
-                          padding: EdgeInsets.only(right: 12.h),
-                          child: CustomDropDown(
-                            icon: Container(
-                              margin: EdgeInsets.only(left: 16.h),
-                              child: CustomImageView(
-                                imagePath: ImageConstant.arrowdown,
-                                height: 18.h,
-                                width: 24.h,
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                            iconSize: 18.h,
-                            hintText: "Seleccionar",
-                            items: dropdownItemList1,
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 12.h, vertical: 14.h),
-                          ),
-                        ),
-                        SizedBox(height: 16.h),
-                        _buildInputtwo(context),
-                        SizedBox(height: 16.h),
-                        Text(
-                          "Modalidad de Limpieza",
-                          style: theme.textTheme.bodyLarge,
-                        ),
-                        SizedBox(height: 16.h),
-                        _buildOptions(context),
-                        SizedBox(height: 24.h),
-                        _buildBotton(context),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 34.h)
-                ],
+              SizedBox(height: 16.0),
+              _buildDropdown(
+                "Municipio",
+                municipalities,
+                selectedMunicipality,
+                (value) => setState(() => selectedMunicipality = value),
+                isLoadingMunicipalities,
               ),
-            ),
+              SizedBox(height: 16.0),
+              _buildOptions(context),
+              SizedBox(height: 32.0),
+              _buildActionButtons(),
+            ],
           ),
         ),
       ),
     );
   }
 
-  PreferredSizeWidget _buildAppbar(BuildContext context) {
-    return CustomAppBar(
-      leadingWidth: 62.h,
-      leading: AppbarLeadingIconButton(
-        imagePath: ImageConstant.arrowBack,
-        margin: EdgeInsets.only(
-          left: 20.h,
-          top: 7.h,
-          bottom: 7.h,
-        ),
-        onTap: () {},
-      ),
-      centerTitle: true,
-      title: AppbarTitle(
-        text: "Ubicación del Sitio",
-        margin: EdgeInsets.only(right: 96.h),
-      ),
-    );
-  }
-
-  Widget _buildInputinnerone(BuildContext context) {
-    return CustomTextFormField(
-      controller: inputinneroneController,
-      hintText: "Nombre del sitio",
-      hintStyle: CustomTextStyles.bodyMediumErrorContainer,
-      contentPadding: EdgeInsets.symmetric(
-        horizontal: 16.h,
-        vertical: 14.h,
-      ),
-    );
-  }
-
-  Widget _buildInput(BuildContext context) {
-    return Container(
-      width: double.maxFinite,
-      margin: EdgeInsets.only(right: 14.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Sitio",
-            style: theme.textTheme.bodyLarge,
-          ),
-          SizedBox(height: 4.h),
-          _buildInputinnerone(context)
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInputinner(BuildContext context) {
-    return CustomTextFormField(
-      controller: inputinnerController,
-      hintText: "Nombre del cruce",
-      hintStyle: CustomTextStyles.bodyMediumErrorContainer,
-      contentPadding: EdgeInsets.symmetric(
-        horizontal: 16.h,
-        vertical: 14.h,
-      ),
-    );
-  }
-
-  Widget _buildInputone(BuildContext context) {
-    return Container(
-      width: double.maxFinite,
-      margin: EdgeInsets.only(right: 14.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Cruce mas cercano",
-            style: theme.textTheme.bodyLarge,
-          ),
-          SizedBox(height: 4.h),
-          _buildInputinner(context)
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCountry(BuildContext context) {
-    return CustomTextFormField(
-      controller: countryController,
-      hintText: "Nicaragua",
-      hintStyle: CustomTextStyles.bodyMediumErrorContainer,
-      textInputAction: TextInputAction.done,
-      contentPadding: EdgeInsets.symmetric(
-        horizontal: 16.h,
-        vertical: 14.h,
-      ),
-    );
-  }
-
-  Widget _buildInputtwo(BuildContext context) {
-    return Container(
-      width: double.maxFinite,
-      margin: EdgeInsets.only(right: 14.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Pais",
-            style: theme.textTheme.bodyLarge,
-          ),
-          SizedBox(height: 4.h),
-          _buildCountry(context)
-        ],
-      ),
-    );
-  }
-
-  Widget _buildOptions(BuildContext context) {
+  Widget _buildActionButtons() {
     return Row(
-      mainAxisSize: MainAxisSize.min,
       children: [
-        CustomCheckboxButton(
-          text: "Terrestre",
-          value: terrestreone,
-          onChange: (value) {
-            terrestreone = value;
-          },
+        Expanded(
+          child: CustomElevatedButton(
+            onPressed: updateSite,
+            text: "Actualizar",
+          ),
         ),
-        SizedBox(width: 26.h),
-        CustomCheckboxButton(
-          text: "Embarcación",
-          value: embarcacinone,
-          onChange: (value) {
-            embarcacinone = value;
-          },
-        ),
-        SizedBox(width: 26.h),
-        CustomCheckboxButton(
-          text: "Submarina",
-          value: submarinaone,
-          onChange: (value) {
-            submarinaone = value;
-          },
+        SizedBox(width: 16.0),
+        Expanded(
+          child: CustomElevatedButton(
+            buttonStyle: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red, // Color de fondo rojo
+            ),
+            onPressed: deactivateSite,
+            text: "Desactivar",
+          ),
         ),
       ],
     );
   }
 
-/*
-  Widget _buildGuardar(BuildContext context) {
-    return CustomElevatedButton(
-      height: 56.h,
-      text: "Guardar",
-      buttonStyle: CustomButtonStyles.fillPrimaryTL16,
-      buttonTextStyle: CustomTextStyles.bodyLargeOnPrimaryContainer,
-    );
-  }*/
-
-  Widget _buildActualizar(BuildContext context) {
-    return Expanded(
-      child: CustomElevatedButton(
-        height: 56.h,
-        text: "Actualizar",
-        buttonStyle: CustomButtonStyles.fillPrimaryTL16,
-        buttonTextStyle: CustomTextStyles.bodyLargeOnPrimaryContainer,
-      ),
+  Widget _buildInput(BuildContext context, String label,
+      TextEditingController controller, String hint) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label),
+        SizedBox(height: 8.0),
+        TextField(
+          controller: controller,
+          decoration: InputDecoration(hintText: hint),
+        ),
+      ],
     );
   }
 
-  Widget _buildDesactivar(BuildContext context) {
-    return Expanded(
-      child: CustomElevatedButton(
-        height: 56.h,
-        text: "Desactivar",
-        margin: EdgeInsets.only(left: 10.h),
-        buttonStyle: CustomButtonStyles.fillRedTL4,
-        buttonTextStyle: CustomTextStyles.bodyLargeOnPrimaryContainer,
-        onPressed: () {},
-      ),
+  Widget _buildOptions(BuildContext context) {
+    return Row(
+      children: [
+        CustomCheckboxButton(
+          value: terrestreone,
+          onChange: (value) => setState(() => terrestreone = value!),
+          text: "Terrestre",
+        ),
+        SizedBox(width: 26.h),
+        CustomCheckboxButton(
+          value: embarcacinone,
+          onChange: (value) => setState(() => embarcacinone = value!),
+          text: "Embarcación",
+        ),
+        SizedBox(width: 26.h),
+        CustomCheckboxButton(
+          value: submarinaone,
+          onChange: (value) => setState(() => submarinaone = value!),
+          text: "Submarina",
+        ),
+      ],
     );
   }
 
-  /// Section Widget
-  Widget _buildBotton(BuildContext context) {
-    return SizedBox(
-      width: double.maxFinite,
-      child: Row(
-        children: [_buildActualizar(context), _buildDesactivar(context)],
-      ),
+  Widget _buildDropdown<T>(
+    String label,
+    List<T> items,
+    T? selectedValue,
+    ValueChanged<T?> onChanged,
+    bool isLoading,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(fontSize: 16.0), // Estilo del texto del label
+        ),
+        SizedBox(height: 8.0),
+        isLoading
+            ? CircularProgressIndicator()
+            : DropdownButtonFormField<T>(
+                value: selectedValue,
+                hint: Text(
+                  "Seleccionar",
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    color: Colors.grey[600], // Color del texto predeterminado
+                  ),
+                ),
+                items: items.map((item) {
+                  if (item is Department) {
+                    return DropdownMenuItem(
+                      value: item,
+                      child: Text(
+                        item.name,
+                        style: TextStyle(
+                          fontSize: 14.0, // Tamaño de fuente uniforme
+                          fontWeight: FontWeight.normal, // Fuente no bold
+                          color: Colors.black, // Color estándar
+                        ),
+                      ),
+                    );
+                  } else if (item is Municipality) {
+                    return DropdownMenuItem(
+                      value: item,
+                      child: Text(
+                        item.name,
+                        style: TextStyle(
+                          fontSize: 14.0, // Tamaño de fuente uniforme
+                          fontWeight: FontWeight.normal, // Fuente no bold
+                          color: Colors.black, // Color estándar
+                        ),
+                      ),
+                    );
+                  }
+                  throw Exception("Tipo no soportado.");
+                }).toList(),
+                onChanged: onChanged,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius:
+                        BorderRadius.circular(8.0), // Bordes redondeados
+                    borderSide: BorderSide(
+                      color: Colors.black, // Color del borde
+                      width: 1.0,
+                    ),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 12.0,
+                    vertical: 8.0,
+                  ),
+                ),
+              ),
+      ],
     );
   }
 }
