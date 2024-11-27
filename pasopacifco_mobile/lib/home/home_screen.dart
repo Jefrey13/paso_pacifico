@@ -88,7 +88,7 @@ class HomeScreen extends StatelessWidget {
                   _buildColumnmegaphone(context),
                   SizedBox(height: 6.h),
                   SizedBox(
-                    height: 658.h,
+                    height: 600.h,
                     width: double.maxFinite,
                     child: Stack(
                       alignment: Alignment.bottomCenter,
@@ -103,16 +103,17 @@ class HomeScreen extends StatelessWidget {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              SizedBox(height: 28.h),
+                              SizedBox(height: 18.h),
                               _buildColumn(context),
-                              SizedBox(height: 44.h),
-                              _buildColumndescripti(context)
+                              SizedBox(height: 20.h),
                             ],
                           ),
                         ),
                       ],
                     ),
                   ),
+                  SizedBox(height: 44.h),
+                  _buildColumndescripti(context)
                 ],
               ),
             ),
@@ -426,7 +427,7 @@ class HomeScreen extends StatelessWidget {
   }*/
     return Container(
       width: double.maxFinite,
-      padding: EdgeInsets.symmetric(vertical: 14.h),
+      padding: EdgeInsets.symmetric(vertical: 20.h),
       decoration: BoxDecoration(
         color: appTheme.gray100,
       ),
