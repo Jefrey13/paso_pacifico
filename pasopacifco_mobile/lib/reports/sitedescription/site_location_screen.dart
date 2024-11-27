@@ -105,13 +105,13 @@ class SiteLocationScreen extends StatelessWidget {
                         ),
                         SizedBox(height: 16.h),
                         _buildInputtwo(context),
-                        SizedBox(height: 16.h),
-                        Text(
-                          "Modalidad de Limpieza",
-                          style: theme.textTheme.bodyLarge,
-                        ),
-                        SizedBox(height: 16.h),
-                        _buildOptions(context)
+                        //SizedBox(height: 16.h),
+                        //Text(
+                        //"Modalidad de Limpieza",
+                        //style: theme.textTheme.bodyLarge,
+                        //),
+                        //SizedBox(height: 16.h),
+                        //_buildOptions(context)
                       ],
                     ),
                   ),
@@ -270,8 +270,12 @@ class SiteLocationScreen extends StatelessWidget {
 
   Widget _buildGuardar(BuildContext context) {
     return CustomElevatedButton(
-      text: "Guardar Registro",
+      text: "Continuar Registro",
       margin: EdgeInsets.only(bottom: 12.h),
+      onPressed: () => Navigator.pushNamed(
+        context,
+        AppRoutes.loadImageScreen,
+      ),
     );
   }
 

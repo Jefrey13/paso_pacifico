@@ -23,8 +23,12 @@ import 'package:pasopacifco_mobile/reports/packaging/packaging_screen.dart';
 import 'package:pasopacifco_mobile/reports/packaging/add_packaging_screen.dart';
 import 'package:pasopacifco_mobile/reports/sitedescription/environment_screen.dart';
 import 'package:pasopacifco_mobile/reports/sitedescription/site_location_screen.dart';
+import 'package:pasopacifco_mobile/reports/map/map_screen.dart';
+import 'package:pasopacifco_mobile/reports/imagereport/load_image_screen.dart';
 
 class AppRoutes {
+  static const String loadImageScreen = '/loadImageScreen';
+  static const String mapScreen = '/mapScreen';
   static const String siteLocationScreen = '/siteLocationScreen';
   static const String environmentScreen = '/environmentScreen';
   static const String addPackagingScreen = '/addPackagingScreen';
@@ -53,6 +57,8 @@ class AppRoutes {
   static const String profileScreen = '/profileScreen';
 
   static Map<String, WidgetBuilder> routes = {
+    loadImageScreen: (context) => LoadImageScreen(),
+    mapScreen: (context) => MapScreen(),
     siteLocationScreen: (context) => SiteLocationScreen(),
     environmentScreen: (context) => EnvironmentScreen(),
     addPackagingScreen: (context) => AddPackagingScreen(),

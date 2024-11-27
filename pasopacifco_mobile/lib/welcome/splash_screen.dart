@@ -78,3 +78,7 @@ Widget _buildColumn(BuildContext context) {
 onTapImgImageone(BuildContext context) {
   Navigator.pushNamed(context, AppRoutes.welcomeScreen);
 }
+
+onTapMapScreen(BuildContext context) {
+  Navigator.pushNamed(context, AppRoutes.mapScreen);
+}

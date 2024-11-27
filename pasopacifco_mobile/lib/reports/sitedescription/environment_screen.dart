@@ -25,7 +25,7 @@ class EnvironmentScreen extends StatelessWidget {
           width: double.maxFinite,
           padding: EdgeInsets.only(
             left: 8.h,
-            right: 40.h,
+            right: 8.h,
             top: 8.h,
           ),
           child: Column(
@@ -91,11 +91,12 @@ class EnvironmentScreen extends StatelessWidget {
             ),
           ),
           SizedBox(height: 12.h),
+          SizedBox(height: 12.h),
           Padding(
             padding: EdgeInsets.only(right: 4.h),
             child: CustomDropDown(
               icon: Container(
-                margin: EdgeInsets.only(left: 28.h),
+                margin: EdgeInsets.only(left: 16.h),
                 child: CustomImageView(
                   imagePath: ImageConstant.arrowdown,
                   width: 18.h,
@@ -103,10 +104,13 @@ class EnvironmentScreen extends StatelessWidget {
                   fit: BoxFit.contain,
                 ),
               ),
-              iconSize: 24.h,
-              hintText: "Modalidad de registro de datos (escoge uno)",
+              iconSize: 18.h,
+              hintText: "Modalidad registro (escoge uno)",
               items: dropdownItemList1,
-              contentPadding: EdgeInsets.symmetric(horizontal: 16.h),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 12.h,
+                vertical: 14.h,
+              ),
             ),
           ),
           SizedBox(height: 24.h),
