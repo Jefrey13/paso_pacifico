@@ -1,24 +1,128 @@
-//import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:pasopacifco_mobile/core/app_export.dart';
-import 'package:pasopacifco_mobile/routes/app_routes.dart';
 import 'package:pasopacifco_mobile/widgets/app_bar/appbar_title.dart';
 import 'package:pasopacifco_mobile/widgets/app_bar/custom_app_bar.dart';
-import 'package:pasopacifco_mobile/widgets/custom_checkbox_button.dart';
-import 'package:pasopacifco_mobile/widgets/custom_drop_dowm.dart';
 import 'package:pasopacifco_mobile/widgets/custom_elevated_button.dart';
-import 'package:pasopacifco_mobile/widgets/custom_search_view.dart';
 import 'package:pasopacifco_mobile/widgets/custom_text_form_field.dart';
 import 'package:pasopacifco_mobile/widgets/app_bar/app_bar_leading_iconbutton.dart';
-import 'package:path/path.dart';
+import 'package:pasopacifco_mobile/waste/models/Category.dart';
+import 'package:pasopacifco_mobile/waste/services/category_service.dart';
+import 'package:pasopacifco_mobile/waste/models/Waste.dart';
+import 'package:pasopacifco_mobile/waste/services/waste_service.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
-class AddWasteScreen extends StatelessWidget {
+class AddWasteScreen extends StatefulWidget {
   AddWasteScreen({Key? key}) : super(key: key);
 
-  TextEditingController inputinneroneController = TextEditingController();
-  List<String> dropdownItemList = ["Item One", "Item Two", "Item Three"];
-  TextEditingController facebookoneController = TextEditingController();
+  @override
+  _AddWasteScreenState createState() => _AddWasteScreenState();
+}
+
+class _AddWasteScreenState extends State<AddWasteScreen> {
+  final CategoryService _categoryService = CategoryService();
+  final WasteService _wasteService = WasteService();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  String? selectedCategory;
+
+  List<Category> categories =
+      []; // Lista para almacenar las categorías obtenidas
+  bool isLoadingCategories = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCategories(); // Cargar categorías desde Firestore
+  }
+
+  // Método para obtener las categorías activas desde Firestore
+  Future<void> _fetchCategories() async {
+    try {
+      final fetchedCategories = await _categoryService.getAllActiveCategories();
+      setState(() {
+        categories = fetchedCategories;
+        isLoadingCategories = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoadingCategories = false;
+      });
+      print("Error al cargar categorías: $e");
+    }
+  }
+
+  // Validación de los campos antes de guardar
+  bool _validateInputs() {
+    if (nameController.text.trim().isEmpty) {
+      Fluttertoast.showToast(
+        msg: "El nombre del residuo no puede estar vacío.",
+        backgroundColor: Colors.orange,
+        textColor: Colors.white,
+      );
+      return false;
+    }
+
+    if (descriptionController.text.trim().isEmpty) {
+      Fluttertoast.showToast(
+        msg: "La descripción no puede estar vacía.",
+        backgroundColor: Colors.orange,
+        textColor: Colors.white,
+      );
+      return false;
+    }
+
+    if (selectedCategory == null) {
+      Fluttertoast.showToast(
+        msg: "Por favor, selecciona una categoría.",
+        backgroundColor: Colors.orange,
+        textColor: Colors.white,
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+  // Método para guardar el residuo en Firestore
+  Future<void> _saveWaste() async {
+    if (!_validateInputs()) return;
+
+    try {
+      final waste = Waste(
+        id: '', // Se generará automáticamente en Firestore
+        name: nameController.text.trim(),
+        description: descriptionController.text.trim(),
+        category: selectedCategory!,
+        state: true,
+        createdAt: DateTime.now(),
+      );
+
+      await _wasteService.createWaste(
+          waste); // Usar el servicio de Waste para crear el residuo
+
+      Fluttertoast.showToast(
+        msg: "Residuo guardado exitosamente.",
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+      );
+
+      // Limpiar los campos después de guardar
+      nameController.clear();
+      descriptionController.clear();
+      setState(() {
+        selectedCategory = null;
+      });
+
+      Navigator.pop(context);
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: "Error al guardar el residuo.",
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+      print("Error al guardar el residuo: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,52 +132,20 @@ class AddWasteScreen extends StatelessWidget {
         appBar: _buildAppbar(context),
         body: Container(
           width: double.maxFinite,
-          padding: EdgeInsets.only(
-            left: 8.h,
-            top: 18.h,
-            right: 8.h,
-          ),
+          padding: EdgeInsets.only(left: 8.h, top: 18.h, right: 8.h),
           child: Column(
-            mainAxisSize: MainAxisSize.max,
             children: [
-              Container(
-                width: double.maxFinite,
-                margin: EdgeInsets.only(left: 2.h),
-                padding: EdgeInsets.symmetric(horizontal: 4.h),
-                child: Column(
-                  children: [
-                    _buildInput(context),
-                    SizedBox(height: 12.h),
-                    CustomDropDown(
-                      icon: Container(
-                        margin: EdgeInsets.only(left: 16.h),
-                        child: CustomImageView(
-                          imagePath: ImageConstant.arrowdown,
-                          width: 18.h,
-                          height: 16.h,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                      iconSize: 18.h,
-                      hintText: "Otros residuos",
-                      items: dropdownItemList,
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 12.h,
-                        vertical: 14.h,
-                      ),
-                      borderDecoration: DropDownStyleHelper.outlineGrayTL4,
-                      fillColor: theme.colorScheme.onPrimaryContainer,
-                    ),
-                    SizedBox(height: 12.h),
-                    _buildColumnlabel(context),
-                    SizedBox(height: 12.h),
-                    CustomElevatedButton(
-                      height: 52.h,
-                      text: "Agregar residuo",
-                      onPressed: () {},
-                    )
-                  ],
-                ),
+              _buildInput(context),
+              SizedBox(height: 12.h),
+              _buildCategoryDropdown(),
+              SizedBox(height: 12.h),
+              _buildDescriptionInput(context),
+              SizedBox(height: 12.h),
+              CustomElevatedButton(
+                height: 52.h,
+                text: "Agregar Residuo",
+                onPressed:
+                    _saveWaste, // Llamada al método para guardar el residuo
               ),
             ],
           ),
@@ -82,17 +154,14 @@ class AddWasteScreen extends StatelessWidget {
     );
   }
 
+  // Método para construir el app bar
   PreferredSizeWidget _buildAppbar(BuildContext context) {
     return CustomAppBar(
       leadingWidth: 62.h,
       leading: AppbarLeadingIconButton(
         imagePath: ImageConstant.arrowBack,
-        margin: EdgeInsets.only(
-          left: 20.h,
-          top: 7.h,
-          bottom: 7.h,
-        ),
-        onTap: () {},
+        margin: EdgeInsets.only(left: 20.h, top: 7.h, bottom: 7.h),
+        onTap: () => Navigator.pop(context),
       ),
       centerTitle: true,
       title: AppbarTitle(
@@ -102,63 +171,83 @@ class AddWasteScreen extends StatelessWidget {
     );
   }
 
+  // Método para construir el campo de nombre
   Widget _buildInput(BuildContext context) {
     return SizedBox(
       width: double.maxFinite,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Nombre",
-            style: theme.textTheme.bodyLarge,
-          ),
+          Text("Nombre", style: theme.textTheme.bodyLarge),
           SizedBox(height: 4.h),
           CustomTextFormField(
-            controller: inputinneroneController,
+            controller: nameController,
             hintText: "Puntas de puros",
             hintStyle: theme.textTheme.bodyMedium!,
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: 16.h,
-              vertical: 14.h,
-            ),
-          )
+            contentPadding:
+                EdgeInsets.symmetric(horizontal: 16.h, vertical: 14.h),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildColumnlabel(BuildContext context) {
-    return Container(
+  // Método para construir el campo de descripción
+  Widget _buildDescriptionInput(BuildContext context) {
+    return SizedBox(
       width: double.maxFinite,
-      margin: EdgeInsets.only(right: 4.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Descripcion",
-            style: CustomTextStyles.bodyLargeBlack900,
-          ),
+          Text("Descripción", style: theme.textTheme.bodyLarge),
           SizedBox(height: 4.h),
           CustomTextFormField(
-            controller: facebookoneController,
-            hintText: "Puntas de puros",
-            hintStyle: CustomTextStyles.bodyMediumErrorContainer,
-            textInputAction: TextInputAction.done,
-            suffix: Container(
-              margin: EdgeInsets.fromLTRB(12.h, 4.h, 2.h, 4.h),
-              //child: CustomImageView(
-              //imagePath: ImageConstant.resize,
-              //height: 8.h,
-              //width: 8.h,
-              //fit: BoxFit.contain,
-              //),
-            ),
-            suffixConstraints: BoxConstraints(
-              maxHeight: 150.h,
-            ),
+            controller: descriptionController,
+            hintText: "Descripción del residuo",
+            hintStyle: theme.textTheme.bodyMedium!,
+            contentPadding:
+                EdgeInsets.symmetric(horizontal: 16.h, vertical: 14.h),
             maxLines: 7,
-            contentPadding: EdgeInsets.fromLTRB(8.h, 4.h, 2.h, 4.h),
           ),
+        ],
+      ),
+    );
+  }
+
+  // Método para construir el dropdown de categorías
+  Widget _buildCategoryDropdown() {
+    return Container(
+      width: double.maxFinite,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Categoría", style: theme.textTheme.bodyLarge),
+          SizedBox(height: 4.h),
+          isLoadingCategories
+              ? CircularProgressIndicator()
+              : DropdownButtonFormField<String>(
+                  value: selectedCategory,
+                  hint: Text("Seleccionar categoría"),
+                  onChanged: (newValue) {
+                    setState(() {
+                      selectedCategory = newValue;
+                    });
+                  },
+                  items: categories.map((Category category) {
+                    return DropdownMenuItem<String>(
+                      value: category.id,
+                      child: Text(category.name),
+                    );
+                  }).toList(),
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      borderSide: BorderSide(color: Colors.black, width: 1.0),
+                    ),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 12.0, vertical: 14.0),
+                  ),
+                ),
         ],
       ),
     );

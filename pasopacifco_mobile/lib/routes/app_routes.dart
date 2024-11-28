@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pasopacifco_mobile/waste/models/Waste.dart';
 import 'package:pasopacifco_mobile/welcome/splash_screen.dart';
 import 'package:pasopacifco_mobile/welcome/welcome_screen.dart';
 import 'package:pasopacifco_mobile/authentication/login/login_screen.dart';
@@ -68,7 +69,13 @@ class AppRoutes {
     addFoundObjectScreen: (context) => AddFoundObjectScreen(),
     foundObjectScreen: (context) => FoundObjectScreen(),
     reportManagementScreen: (context) => ReportManagementScreen(),
-    editWasteScreen: (context) => EditWasteScreen(),
+
+    editWasteScreen: (context) {
+      final waste = ModalRoute.of(context)?.settings.arguments as Waste;
+      return EditWasteScreen(waste: waste);
+    },
+    //editWasteScreen: (context) => EditWasteScreen(),
+
     addWasteScreen: (context) => AddWasteScreen(),
     wasteManagementScreen: (context) => WasteManagementScreen(),
     addSiteLocationScreen: (context) => AddSiteLocationScreen(),

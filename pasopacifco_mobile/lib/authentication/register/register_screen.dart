@@ -456,7 +456,7 @@ class RegisterScreen extends StatelessWidget {
 
       if (user != null) {
         Fluttertoast.showToast(
-          msg: "Registro exitoso. Bienvenido, ${user.displayName}!",
+          msg: "Usuario completado con éxito!",
           backgroundColor: Colors.green,
           gravity: ToastGravity.BOTTOM,
           textColor: Colors.white,

@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pasopacifco_mobile/sites/models/Department.dart';
 import 'package:pasopacifco_mobile/sites/models/Municipality.dart';
+import 'package:pasopacifco_mobile/waste/services/category_service.dart';
 
 var globalMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
@@ -17,6 +18,12 @@ void main() async {
 
   // Llama a la función para agregar datos, pero solo si no existen
   //await addDepartmentsAndMunicipalitiesToFirestore();
+  // Llama a la función para agregar categorías predeterminadas si no existen
+  //final CategoryService _categoryService = CategoryService();
+  //await _categoryService.createDefaultCategories();
+
+  // Si también deseas agregar los departamentos y municipios, descomenta esta línea
+  // await addDepartmentsAndMunicipalitiesToFirestore();
 
   runApp(MyApp());
 }

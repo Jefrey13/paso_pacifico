@@ -1,4 +1,8 @@
+import 'dart:ffi';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pasopacifco_mobile/core/app_export.dart';
 import 'package:pasopacifco_mobile/routes/app_routes.dart';
 import 'package:pasopacifco_mobile/widgets/app_bar/appbar_title.dart';
@@ -44,14 +48,7 @@ class ConfigurationScreen extends StatelessWidget {
               SizedBox(height: 10.h),
               _buildColumnprivacypo(context),
               SizedBox(height: 10.h),
-              CustomTextFormField(
-                controller: privacypolicyController,
-                hintText: "Cerrar sesión",
-                textInputAction: TextInputAction.done,
-                contentPadding: EdgeInsets.fromLTRB(1.h, 12.h, 12.h, 20.h),
-                borderDecoration: TextFormFieldStyleHelper.underLineGray,
-                filled: false,
-              ),
+              _buildColumnSignUp(context),
             ],
           ),
         ),
@@ -162,6 +159,35 @@ class ConfigurationScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildColumnSignUp(BuildContext context) {
+    return SizedBox(
+      width: double.maxFinite,
+      child: GestureDetector(
+        onTap: () async => await onTapSignUp(context),
+        child: SizedBox(
+          width: double.maxFinite,
+          child: Column(
+            children: [
+              SizedBox(
+                width: double.maxFinite,
+                child: _buildRowchangepasswo(
+                  context,
+                  changepassword: "Cerrar Sesión",
+                ),
+              ),
+              //SizedBox(height: 8.h),
+              CustomTextFormField(
+                contentPadding: EdgeInsets.fromLTRB(1.h, 1.h, 1.h, 1.h),
+                borderDecoration: TextFormFieldStyleHelper.underLineGray,
+                filled: false,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildRowchangepasswo(
     BuildContext context, {
     required String changepassword,
@@ -193,6 +219,19 @@ class ConfigurationScreen extends StatelessWidget {
 
   onTapTermsAndConditions(BuildContext context) {
     Navigator.pushNamed(context, AppRoutes.termsScreen);
+  }
+
+  Future<void> onTapSignUp(BuildContext context) async {
+    await FirebaseAuth.instance.signOut();
+    Fluttertoast.showToast(
+      msg: "¡Sesión cerrada exitosamente!",
+      backgroundColor: Colors.green,
+      gravity: ToastGravity.BOTTOM,
+      textColor: Colors.white,
+      fontSize: 16.0,
+      toastLength: Toast.LENGTH_SHORT,
+    );
+    Navigator.pushReplacementNamed(context, AppRoutes.loginScreen);
   }
 
   onTapProfile(BuildContext context) {
