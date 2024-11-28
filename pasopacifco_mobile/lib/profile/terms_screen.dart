@@ -45,25 +45,35 @@ class _TermsScreenState extends State<TermsScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: _buildAppbar(context),
-        body: Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(ImageConstant.Logo),
-              fit: BoxFit.cover,
+        body: Stack(
+          children: [
+            // Imagen de fondo
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(ImageConstant.Logo),
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
-          ),
-          child: _isLoading
-              ? Center(child: CircularProgressIndicator())
-              : _errorMessage != null
-                  ? Center(
-                      child: Text(
-                        _errorMessage!,
-                        style: CustomTextStyles.bodyMediumErrorContainer,
-                        textAlign: TextAlign.center,
-                      ),
-                    )
-                  : _buildTermsContent(),
+            // Capa semitransparente para mejorar la visibilidad del texto
+            Container(
+              color: Colors.black.withOpacity(0.3), // Ajusta la opacidad aquí
+            ),
+            // Contenido principal
+            _isLoading
+                ? Center(child: CircularProgressIndicator())
+                : _errorMessage != null
+                    ? Center(
+                        child: Text(
+                          _errorMessage!,
+                          style: CustomTextStyles.bodyMediumErrorContainer,
+                          textAlign: TextAlign.center,
+                        ),
+                      )
+                    : _buildTermsContent(),
+          ],
         ),
       ),
     );
@@ -124,7 +134,7 @@ class _TermsScreenState extends State<TermsScreen> {
             child: Text(
               title,
               style: CustomTextStyles.bodyMediumBluegray900.copyWith(
-                color: Colors.green,
+                color: appTheme.lime600,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -132,7 +142,9 @@ class _TermsScreenState extends State<TermsScreen> {
           SizedBox(height: 8.h),
           Text(
             content ?? "Información no disponible",
-            style: CustomTextStyles.bodyMediumBluegray900,
+            style: CustomTextStyles.bodyMediumBluegray900.copyWith(
+              color: Colors.white, // Cambia el color de la letra a blanco
+            ),
           ),
         ],
       ),

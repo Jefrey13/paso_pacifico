@@ -141,7 +141,10 @@ class _WasteManagementScreenState extends State<WasteManagementScreen> {
       width: double.maxFinite,
       child: GestureDetector(
         onTap: () {
-          Navigator.pushNamed(context, AppRoutes.addWasteScreen);
+          Navigator.pushNamed(context, AppRoutes.addWasteScreen).then((_) {
+            // Refrescar datos después de regresar de la pantalla de creación
+            _fetchWastes();
+          });
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -155,7 +158,11 @@ class _WasteManagementScreenState extends State<WasteManagementScreen> {
             ),
             IconButton(
               onPressed: () {
-                Navigator.pushNamed(context, AppRoutes.addWasteScreen);
+                Navigator.pushNamed(context, AppRoutes.addWasteScreen)
+                    .then((_) {
+                  // Refrescar datos después de regresar de la pantalla de creación
+                  _fetchWastes();
+                });
               },
               constraints: BoxConstraints(minHeight: 50.h, minWidth: 50.h),
               padding: EdgeInsets.all(0),

@@ -10,10 +10,12 @@ class ManagementElementsWidget extends StatelessWidget {
   final Site site;
   final String departmentName;
   final String municipalityName;
+  final VoidCallback onSiteEdited; // Callback para notificar cambios
 
   const ManagementElementsWidget({
     required this.site,
     required this.departmentName,
+    required this.onSiteEdited,
     required this.municipalityName,
     Key? key,
   }) : super(key: key);
@@ -92,7 +94,10 @@ class ManagementElementsWidget extends StatelessWidget {
           context,
           AppRoutes.editSiteLocationScreen,
           arguments: site,
-        );
+        ).then((_) {
+          // Invoca el callback después de regresar de la pantalla de edición
+          onSiteEdited();
+        });
       },
     );
   }

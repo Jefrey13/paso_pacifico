@@ -119,7 +119,11 @@ class _SiteManagementScreenState extends State<SiteManagementScreen> {
             CustomTextStyles.bodyMediumLeagueSpartanOnPrimaryContainer,
         alignment: Alignment.centerRight,
         onPressed: () {
-          Navigator.pushNamed(context, AppRoutes.addSiteLocationScreen);
+          Navigator.pushNamed(context, AppRoutes.addSiteLocationScreen)
+              .then((_) {
+            // Refrescar datos después de regresar de la pantalla de creación
+            _fetchSites();
+          });
         },
         text: "Agregar Sitio",
       ),
@@ -139,6 +143,7 @@ class _SiteManagementScreenState extends State<SiteManagementScreen> {
                 _departmentNames[site.departmentId] ?? "Desconocido",
             municipalityName:
                 _municipalityNames[site.municipalityId] ?? "Desconocido",
+            onSiteEdited: _fetchSites,
           );
         },
       ),

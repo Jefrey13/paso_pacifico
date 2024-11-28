@@ -12,7 +12,8 @@ import 'package:pasopacifco_mobile/widgets/custom_checkbox_button.dart';
 import 'package:pasopacifco_mobile/widgets/custom_elevated_button.dart';
 
 class EditSiteLocationScreen extends StatefulWidget {
-  final Site site; // Recibe el sitio a editar
+  final Site site;
+
   EditSiteLocationScreen({Key? key, required this.site}) : super(key: key);
 
   @override
@@ -20,21 +21,17 @@ class EditSiteLocationScreen extends StatefulWidget {
 }
 
 class _EditSiteLocationScreenState extends State<EditSiteLocationScreen> {
-  // Controladores de texto
   late TextEditingController nameController;
   late TextEditingController crossingController;
 
-  // Datos dinámicos
   List<Department> departments = [];
   List<Municipality> municipalities = [];
   Department? selectedDepartment;
   Municipality? selectedMunicipality;
 
-  // Estados de carga
   bool isLoadingDepartments = true;
   bool isLoadingMunicipalities = false;
 
-  // Checkbox values
   bool terrestreone = false;
   bool embarcacinone = false;
   bool submarinaone = false;
@@ -42,27 +39,19 @@ class _EditSiteLocationScreenState extends State<EditSiteLocationScreen> {
   @override
   void initState() {
     super.initState();
-
-    // Inicializar controladores con los datos del sitio
     nameController = TextEditingController(text: widget.site.name);
     crossingController =
         TextEditingController(text: widget.site.closestCrossing);
 
-    // Inicializar modalidades de limpieza
     terrestreone = widget.site.cleaningModes.contains("Terrestre");
     embarcacinone = widget.site.cleaningModes.contains("Embarcación");
     submarinaone = widget.site.cleaningModes.contains("Submarina");
 
-    // Cargar departamentos y municipios
     fetchDepartments();
-    fetchMunicipalities(widget.site.departmentId);
   }
 
-  /// Cargar departamentos desde Firestore
   Future<void> fetchDepartments() async {
-    setState(() {
-      isLoadingDepartments = true;
-    });
+    setState(() => isLoadingDepartments = true);
     try {
       final locationService = LocationService();
       final fetchedDepartments = await locationService.getAllDepartments();
@@ -70,13 +59,16 @@ class _EditSiteLocationScreenState extends State<EditSiteLocationScreen> {
         departments = fetchedDepartments;
         selectedDepartment = departments.firstWhere(
           (dept) => dept.id == widget.site.departmentId,
+          orElse: () => departments.first,
         );
         isLoadingDepartments = false;
       });
+
+      if (selectedDepartment != null) {
+        fetchMunicipalities(selectedDepartment!.id);
+      }
     } catch (e) {
-      setState(() {
-        isLoadingDepartments = false;
-      });
+      setState(() => isLoadingDepartments = false);
       Fluttertoast.showToast(
         msg: "Error al cargar departamentos.",
         backgroundColor: Colors.red,
@@ -85,10 +77,11 @@ class _EditSiteLocationScreenState extends State<EditSiteLocationScreen> {
     }
   }
 
-  /// Cargar municipios basados en el departamento seleccionado
   Future<void> fetchMunicipalities(String departmentId) async {
     setState(() {
       isLoadingMunicipalities = true;
+      municipalities = [];
+      selectedMunicipality = null; // Limpia el municipio seleccionado
     });
     try {
       final locationService = LocationService();
@@ -96,13 +89,19 @@ class _EditSiteLocationScreenState extends State<EditSiteLocationScreen> {
           await locationService.getMunicipalitiesByDepartment(departmentId);
       setState(() {
         municipalities = fetchedMunicipalities;
-        selectedMunicipality = municipalities.firstWhere(
-          (mun) => mun.id == widget.site.municipalityId,
-        );
+        if (municipalities.any((mun) => mun.id == widget.site.municipalityId)) {
+          selectedMunicipality = municipalities.firstWhere(
+            (mun) => mun.id == widget.site.municipalityId,
+          );
+        } else {
+          selectedMunicipality =
+              null; // Municipio no coincide con el nuevo departamento
+        }
         isLoadingMunicipalities = false;
       });
     } catch (e) {
       setState(() {
+        municipalities = [];
         isLoadingMunicipalities = false;
       });
       Fluttertoast.showToast(
@@ -113,7 +112,6 @@ class _EditSiteLocationScreenState extends State<EditSiteLocationScreen> {
     }
   }
 
-  /// Validar inputs antes de guardar cambios
   bool validateInputs() {
     if (nameController.text.trim().isEmpty) {
       Fluttertoast.showToast(
@@ -145,7 +143,6 @@ class _EditSiteLocationScreenState extends State<EditSiteLocationScreen> {
     return true;
   }
 
-  /// Actualizar el sitio
   Future<void> updateSite() async {
     if (!validateInputs()) return;
 
@@ -185,7 +182,6 @@ class _EditSiteLocationScreenState extends State<EditSiteLocationScreen> {
     }
   }
 
-  /// Desactivar el sitio
   Future<void> deactivateSite() async {
     try {
       final siteService = SiteService();
@@ -273,7 +269,7 @@ class _EditSiteLocationScreenState extends State<EditSiteLocationScreen> {
         Expanded(
           child: CustomElevatedButton(
             buttonStyle: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red, // Color de fondo rojo
+              backgroundColor: Colors.red,
             ),
             onPressed: deactivateSite,
             text: "Desactivar",
@@ -332,10 +328,7 @@ class _EditSiteLocationScreenState extends State<EditSiteLocationScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: TextStyle(fontSize: 16.0), // Estilo del texto del label
-        ),
+        Text(label, style: TextStyle(fontSize: 16.0)),
         SizedBox(height: 8.0),
         isLoading
             ? CircularProgressIndicator()
@@ -343,10 +336,7 @@ class _EditSiteLocationScreenState extends State<EditSiteLocationScreen> {
                 value: selectedValue,
                 hint: Text(
                   "Seleccionar",
-                  style: TextStyle(
-                    fontSize: 14.0,
-                    color: Colors.grey[600], // Color del texto predeterminado
-                  ),
+                  style: TextStyle(fontSize: 14.0, color: Colors.grey[600]),
                 ),
                 items: items.map((item) {
                   if (item is Department) {
@@ -354,11 +344,7 @@ class _EditSiteLocationScreenState extends State<EditSiteLocationScreen> {
                       value: item,
                       child: Text(
                         item.name,
-                        style: TextStyle(
-                          fontSize: 14.0, // Tamaño de fuente uniforme
-                          fontWeight: FontWeight.normal, // Fuente no bold
-                          color: Colors.black, // Color estándar
-                        ),
+                        style: TextStyle(fontSize: 14.0, color: Colors.black),
                       ),
                     );
                   } else if (item is Municipality) {
@@ -366,11 +352,7 @@ class _EditSiteLocationScreenState extends State<EditSiteLocationScreen> {
                       value: item,
                       child: Text(
                         item.name,
-                        style: TextStyle(
-                          fontSize: 14.0, // Tamaño de fuente uniforme
-                          fontWeight: FontWeight.normal, // Fuente no bold
-                          color: Colors.black, // Color estándar
-                        ),
+                        style: TextStyle(fontSize: 14.0, color: Colors.black),
                       ),
                     );
                   }
@@ -379,17 +361,11 @@ class _EditSiteLocationScreenState extends State<EditSiteLocationScreen> {
                 onChanged: onChanged,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
-                    borderRadius:
-                        BorderRadius.circular(8.0), // Bordes redondeados
-                    borderSide: BorderSide(
-                      color: Colors.black, // Color del borde
-                      width: 1.0,
-                    ),
+                    borderRadius: BorderRadius.circular(8.0),
+                    borderSide: BorderSide(color: Colors.black, width: 1.0),
                   ),
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 12.0,
-                    vertical: 8.0,
-                  ),
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                 ),
               ),
       ],
