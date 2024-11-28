@@ -1,90 +1,191 @@
 import 'package:flutter/material.dart';
 import 'package:pasopacifco_mobile/core/app_export.dart';
-import 'package:pasopacifco_mobile/routes/app_routes.dart';
+import 'package:pasopacifco_mobile/profile/models/UserProfile.dart';
+import 'package:pasopacifco_mobile/profile/services/user_service.dart';
 import 'package:pasopacifco_mobile/widgets/app_bar/appbar_title.dart';
 import 'package:pasopacifco_mobile/widgets/app_bar/custom_app_bar.dart';
-import 'package:pasopacifco_mobile/widgets/custom_text_form_field.dart';
 import 'package:pasopacifco_mobile/widgets/app_bar/app_bar_leading_iconbutton.dart';
+import 'package:pasopacifco_mobile/widgets/custom_text_form_field.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   ProfileScreen({Key? key}) : super(key: key);
 
-  TextEditingController lockoneController = TextEditingController();
-  TextEditingController emailoneController = TextEditingController();
-  TextEditingController phonesphonecallController = TextEditingController();
-  TextEditingController grouponeController = TextEditingController();
-  TextEditingController lucidesquarepenController = TextEditingController();
-  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  @override
+  _ProfileScreenState createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final UserService _userService = UserService();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  late TextEditingController nameController;
+  late TextEditingController emailController;
+  late TextEditingController phoneController;
+
+  bool isEditingName = false;
+  bool isEditingEmail = false;
+  bool isEditingPhone = false;
+
+  UserProfile? userProfile;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserProfile();
+  }
+
+  Future<void> _loadUserProfile() async {
+    try {
+      final profile = await _userService.getUserProfile();
+
+      setState(() {
+        userProfile = profile;
+        nameController = TextEditingController(text: profile.displayName);
+        emailController = TextEditingController(text: profile.email);
+        phoneController = TextEditingController(text: profile.phoneNumber);
+      });
+    } catch (e) {
+      _showError("Error: " + e.toString());
+    }
+  }
+
+  Future<void> _updateUserProfile(String field, String value) async {
+    try {
+      if (field == 'displayName') {
+        await _userService.updateUserName(value);
+        setState(() => userProfile?.displayName = value);
+      } else if (field == 'email') {
+        await _userService.updateUserEmail(value);
+        setState(() => userProfile?.email = value);
+      } else if (field == 'phoneNumber') {
+        await _userService.updateUserPhone(value);
+        setState(() => userProfile?.phoneNumber = value);
+      }
+    } catch (e) {
+      _showError(e.toString());
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  Widget _buildEditableField({
+    required String label,
+    required TextEditingController controller,
+    required bool isEditing,
+    required Function onSave,
+    required VoidCallback toggleEditMode,
+  }) {
+    return SizedBox(
+      width: double.maxFinite,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: CustomTextStyles.bodyMediumGray60001),
+          Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: controller,
+                  enabled: isEditing,
+                  style: CustomTextStyles.bodyMediumOnPrimary,
+                  decoration: InputDecoration(
+                    border: TextFormFieldStyleHelper.underLineGray,
+                    contentPadding: EdgeInsets.only(top: 8.h, bottom: 8.h),
+                  ),
+                ),
+              ),
+              IconButton(
+                icon: Icon(isEditing ? Icons.check : Icons.edit,
+                    color: appTheme.lime600),
+                onPressed: isEditing
+                    ? () {
+                        onSave();
+                        toggleEditMode();
+                      }
+                    : toggleEditMode,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: _buildAppbar(context),
-        body: Form(
-          key: _formKey,
-          child: SizedBox(
-            width: double.maxFinite,
-            child: SingleChildScrollView(
-              child: Container(
-                width: double.maxFinite,
-                padding: EdgeInsets.only(
-                  left: 20.h,
-                  right: 24.h,
-                  top: 20.h,
-                ),
-                child: Column(
-                  children: [
-                    Container(
-                      height: 90.h,
-                      width: 92.h,
-                      decoration: BoxDecoration(
-                        color: appTheme.gray900.withOpacity(0.12),
-                        borderRadius: BorderRadiusStyle.roundedBorder44,
+        body: userProfile == null
+            ? Center(child: CircularProgressIndicator())
+            : Form(
+                key: _formKey,
+                child: SingleChildScrollView(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 20.h, vertical: 20.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      CircleAvatar(
+                        radius: 45.h,
+                        backgroundImage:
+                            AssetImage(ImageConstant.image_not_found),
                       ),
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          CustomImageView(
-                            imagePath: ImageConstant.image_not_found,
-                            height: 90.h,
-                            width: 90.h,
-                            radius: BorderRadius.circular(
-                              44.h,
-                            ),
-                          )
-                        ],
+                      SizedBox(height: 10.h),
+                      Text(userProfile!.displayName,
+                          style: CustomTextStyles.titleSmallOnPrimary),
+                      SizedBox(height: 5.h),
+                      Text("Cordinador",
+                          style: CustomTextStyles.bodyMediumGray60001_1),
+                      SizedBox(height: 30.h),
+                      _buildEditableField(
+                        label: "Nombre Completo",
+                        controller: nameController,
+                        isEditing: isEditingName,
+                        toggleEditMode: () =>
+                            setState(() => isEditingName = !isEditingName),
+                        onSave: () async {
+                          await _updateUserProfile(
+                              'displayName', nameController.text);
+                        },
                       ),
-                    ),
-                    Text(
-                      "MarlonAguilar",
-                      style: CustomTextStyles.titleSmallOnPrimary,
-                    ),
-                    SizedBox(height: 2.h),
-                    Text(
-                      "Cordinador",
-                      style: CustomTextStyles.bodyMediumGray60001_1,
-                    ),
-                    SizedBox(height: 30.h),
-                    _buildNameField(context),
-                    SizedBox(height: 20.h),
-                    _buildEmailField(context),
-                    SizedBox(height: 20.h),
-                    _buildNumberField(context),
-                    SizedBox(height: 20.h),
-                    _buildDateOfBirthField(context),
-                    SizedBox(height: 22.h),
-                    Text(
-                      "Se unió el 17 de octubre de 2024",
-                      style: CustomTextStyles.bodySmallRobotoGray60001,
-                    ),
-                    SizedBox(height: 142.h)
-                  ],
+                      SizedBox(height: 20.h),
+                      _buildEditableField(
+                        label: "Correo Electrónico",
+                        controller: emailController,
+                        isEditing: isEditingEmail,
+                        toggleEditMode: () =>
+                            setState(() => isEditingEmail = !isEditingEmail),
+                        onSave: () async {
+                          await _updateUserProfile(
+                              'email', emailController.text);
+                        },
+                      ),
+                      SizedBox(height: 20.h),
+                      _buildEditableField(
+                        label: "Número de Teléfono",
+                        controller: phoneController,
+                        isEditing: isEditingPhone,
+                        toggleEditMode: () =>
+                            setState(() => isEditingPhone = !isEditingPhone),
+                        onSave: () async {
+                          await _updateUserProfile(
+                              'phoneNumber', phoneController.text);
+                        },
+                      ),
+                      SizedBox(height: 22.h),
+                      Text(
+                        "Se unió el 17 de octubre de 2024",
+                        style: CustomTextStyles.bodySmallRobotoGray60001,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ),
-        ),
       ),
     );
   }
@@ -94,250 +195,10 @@ class ProfileScreen extends StatelessWidget {
       leadingWidth: 62.h,
       leading: AppbarLeadingIconButton(
         imagePath: ImageConstant.arrowBack,
-        margin: EdgeInsets.only(
-          left: 20.h,
-          top: 7.h,
-          bottom: 7.h,
-        ),
-        onTap: () {},
+        onTap: () => Navigator.pop(context),
       ),
       centerTitle: true,
-      title: AppbarTitle(
-        text: "Mi perfil",
-      ),
-    );
-  }
-
-  Widget _buildNameField(BuildContext context) {
-    return SizedBox(
-      width: double.maxFinite,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Nombre Completo",
-            style: CustomTextStyles.bodyMediumGray60001,
-          ),
-          SizedBox(
-            height: 6.h,
-          ),
-          CustomTextFormField(
-            controller: lockoneController,
-            hintText: "Marlon Aguilar",
-            hintStyle: CustomTextStyles.bodyMediumOnPrimary,
-            prefix: Container(
-              margin: EdgeInsets.only(
-                top: 6.h,
-                right: 16.h,
-                bottom: 6.h,
-              ),
-              child: CustomImageView(
-                imagePath: ImageConstant.profile,
-                height: 20.h,
-                width: 22.h,
-                fit: BoxFit.contain,
-              ),
-            ),
-            prefixConstraints: BoxConstraints(
-              maxHeight: 34.h,
-            ),
-            suffix: Container(
-              margin: EdgeInsets.fromLTRB(16.h, 6.h, 20.h, 6.h),
-              child: CustomImageView(
-                imagePath: ImageConstant.pen,
-                height: 20.h,
-                width: 22.h,
-                fit: BoxFit.contain,
-              ),
-            ),
-            suffixConstraints: BoxConstraints(
-              maxHeight: 34.h,
-            ),
-            contentPadding: EdgeInsets.only(
-              left: 6.h,
-              top: 20.h,
-              bottom: 6.h,
-            ),
-            borderDecoration: TextFormFieldStyleHelper.underLineGray,
-            filled: false,
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEmailField(BuildContext context) {
-    return SizedBox(
-      width: double.maxFinite,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Correo electrónico",
-            style: CustomTextStyles.bodyMediumGray60001,
-          ),
-          SizedBox(
-            height: 6.h,
-          ),
-          CustomTextFormField(
-            controller: lockoneController,
-            hintText: "marlonaguiar@gmail.com",
-            hintStyle: CustomTextStyles.bodyMediumOnPrimary,
-            prefix: Container(
-              margin: EdgeInsets.only(
-                top: 6.h,
-                right: 16.h,
-                bottom: 6.h,
-              ),
-              child: CustomImageView(
-                imagePath: ImageConstant.email,
-                height: 20.h,
-                width: 22.h,
-                fit: BoxFit.contain,
-              ),
-            ),
-            prefixConstraints: BoxConstraints(
-              maxHeight: 34.h,
-            ),
-            suffix: Container(
-              margin: EdgeInsets.fromLTRB(16.h, 6.h, 20.h, 6.h),
-              child: CustomImageView(
-                imagePath: ImageConstant.pen,
-                height: 20.h,
-                width: 22.h,
-                fit: BoxFit.contain,
-              ),
-            ),
-            suffixConstraints: BoxConstraints(
-              maxHeight: 34.h,
-            ),
-            contentPadding: EdgeInsets.only(
-              left: 6.h,
-              top: 20.h,
-              bottom: 6.h,
-            ),
-            borderDecoration: TextFormFieldStyleHelper.underLineGray,
-            filled: false,
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNumberField(BuildContext context) {
-    return SizedBox(
-      width: double.maxFinite,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Número de teléfono",
-            style: CustomTextStyles.bodyMediumGray60001_1,
-          ),
-          SizedBox(
-            height: 10.h,
-          ),
-          CustomTextFormField(
-            controller: phonesphonecallController,
-            hintText: "+506 8888 8888",
-            hintStyle: CustomTextStyles.bodyMediumOnPrimary,
-            textInputType: TextInputType.phone,
-            prefix: Container(
-              margin: EdgeInsets.only(
-                top: 6.h,
-                right: 16.h,
-                bottom: 6.h,
-              ),
-              child: CustomImageView(
-                imagePath: ImageConstant.pen,
-                height: 20.h,
-                width: 22.h,
-                fit: BoxFit.contain,
-              ),
-            ),
-            prefixConstraints: BoxConstraints(
-              maxHeight: 32.h,
-            ),
-            suffix: Container(
-              margin: EdgeInsets.fromLTRB(16.h, 6.h, 20.h, 6.h),
-              child: CustomImageView(
-                imagePath: ImageConstant.pen,
-                height: 20.h,
-                width: 22.h,
-                fit: BoxFit.contain,
-              ),
-            ),
-            suffixConstraints: BoxConstraints(
-              maxHeight: 32.h,
-            ),
-            contentPadding: EdgeInsets.only(
-              left: 6.h,
-              top: 20.h,
-              bottom: 6.h,
-            ),
-            borderDecoration: TextFormFieldStyleHelper.underLineGray,
-            filled: false,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDateOfBirthField(BuildContext context) {
-    return SizedBox(
-      width: double.maxFinite,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Fecha de nacimiento",
-            style: CustomTextStyles.bodyMediumGray60001,
-          ),
-          SizedBox(
-            height: 6.h,
-          ),
-          CustomTextFormField(
-            controller: lockoneController,
-            hintText: "15 de octubre de 2024",
-            hintStyle: CustomTextStyles.bodyMediumOnPrimary,
-            prefix: Container(
-              margin: EdgeInsets.only(
-                top: 6.h,
-                right: 16.h,
-                bottom: 6.h,
-              ),
-              child: CustomImageView(
-                imagePath: ImageConstant.confetti,
-                height: 20.h,
-                width: 22.h,
-                fit: BoxFit.contain,
-              ),
-            ),
-            prefixConstraints: BoxConstraints(
-              maxHeight: 34.h,
-            ),
-            suffix: Container(
-              margin: EdgeInsets.fromLTRB(16.h, 6.h, 20.h, 6.h),
-              child: CustomImageView(
-                imagePath: ImageConstant.pen,
-                height: 20.h,
-                width: 22.h,
-                fit: BoxFit.contain,
-              ),
-            ),
-            suffixConstraints: BoxConstraints(
-              maxHeight: 34.h,
-            ),
-            contentPadding: EdgeInsets.only(
-              left: 6.h,
-              top: 20.h,
-              bottom: 6.h,
-            ),
-            borderDecoration: TextFormFieldStyleHelper.underLineGray,
-            filled: false,
-          )
-        ],
-      ),
+      title: AppbarTitle(text: "Mi Perfil"),
     );
   }
 }
