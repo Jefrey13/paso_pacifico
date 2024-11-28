@@ -50,15 +50,12 @@ class SiteLocationScreen extends StatelessWidget {
                           style: CustomTextStyles.titleSmallBlack90001,
                         ),
                         SizedBox(height: 16.h),
-                        _buildInput(context),
-                        SizedBox(height: 16.h),
-                        _buildInputone(context),
-                        SizedBox(height: 16.h),
                         Text(
-                          "Departamento",
+                          "Nombre del sitio",
                           style: theme.textTheme.bodyLarge,
                         ),
                         SizedBox(height: 16.h),
+                        //_buildInput(context),
                         Padding(
                           padding: EdgeInsets.only(right: 12.h),
                           child: CustomDropDown(
@@ -79,39 +76,13 @@ class SiteLocationScreen extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 16.h),
-                        Text(
-                          "Municipio",
-                          style: theme.textTheme.bodyLarge,
-                        ),
+                        _buildInputone(context),
                         SizedBox(height: 16.h),
-                        Padding(
-                          padding: EdgeInsets.only(right: 12.h),
-                          child: CustomDropDown(
-                            icon: Container(
-                              margin: EdgeInsets.only(left: 16.h),
-                              child: CustomImageView(
-                                imagePath: ImageConstant.arrowdown,
-                                height: 18.h,
-                                width: 24.h,
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                            iconSize: 18.h,
-                            hintText: "Seleccionar",
-                            items: dropdownItemList1,
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 12.h, vertical: 14.h),
-                          ),
-                        ),
+                        _buildInputDepto(context),
+                        SizedBox(height: 16.h),
+                        _buildInputMuni(context),
                         SizedBox(height: 16.h),
                         _buildInputtwo(context),
-                        SizedBox(height: 16.h),
-                        Text(
-                          "Modalidad de Limpieza",
-                          style: theme.textTheme.bodyLarge,
-                        ),
-                        SizedBox(height: 16.h),
-                        _buildOptions(context)
                       ],
                     ),
                   ),
@@ -237,41 +208,76 @@ class SiteLocationScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildOptions(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        CustomCheckboxButton(
-          text: "Terrestre",
-          value: terrestreone,
-          onChange: (value) {
-            terrestreone = value;
-          },
-        ),
-        SizedBox(width: 26.h),
-        CustomCheckboxButton(
-          text: "Embarcación",
-          value: embarcacinone,
-          onChange: (value) {
-            embarcacinone = value;
-          },
-        ),
-        SizedBox(width: 26.h),
-        CustomCheckboxButton(
-          text: "Submarina",
-          value: submarinaone,
-          onChange: (value) {
-            submarinaone = value;
-          },
-        ),
-      ],
+  Widget _buildInputDepto(BuildContext context) {
+    return Container(
+      width: double.maxFinite,
+      margin: EdgeInsets.only(right: 14.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Departamento",
+            style: theme.textTheme.bodyLarge,
+          ),
+          SizedBox(height: 4.h),
+          _buildDepto(context)
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDepto(BuildContext context) {
+    return CustomTextFormField(
+      controller: countryController,
+      hintText: "Carazo",
+      hintStyle: CustomTextStyles.bodyMediumErrorContainer,
+      textInputAction: TextInputAction.done,
+      contentPadding: EdgeInsets.symmetric(
+        horizontal: 16.h,
+        vertical: 14.h,
+      ),
+    );
+  }
+
+  Widget _buildInputMuni(BuildContext context) {
+    return Container(
+      width: double.maxFinite,
+      margin: EdgeInsets.only(right: 14.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Municipio",
+            style: theme.textTheme.bodyLarge,
+          ),
+          SizedBox(height: 4.h),
+          _buildMuni(context)
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMuni(BuildContext context) {
+    return CustomTextFormField(
+      controller: countryController,
+      hintText: "Casares",
+      hintStyle: CustomTextStyles.bodyMediumErrorContainer,
+      textInputAction: TextInputAction.done,
+      contentPadding: EdgeInsets.symmetric(
+        horizontal: 16.h,
+        vertical: 14.h,
+      ),
     );
   }
 
   Widget _buildGuardar(BuildContext context) {
     return CustomElevatedButton(
-      text: "Guardar Registro",
+      text: "Continuar Registro",
       margin: EdgeInsets.only(bottom: 12.h),
+      onPressed: () => Navigator.pushNamed(
+        context,
+        AppRoutes.loadImageScreen,
+      ),
     );
   }
 
