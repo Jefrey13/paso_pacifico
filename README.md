@@ -17,26 +17,56 @@ Puedes acceder al código fuente de este proyecto en GitHub:
 
 This document showcases various screens of our application to provide a visual overview of its functionality and user interface.
 
-## Welcome Screen
-![Welcome Screen](https://i.ibb.co/7JXWPPz/welcome.jpg)
+# Screenshots of the Application
 
-## Login Screen
-![Login Screen](https://i.ibb.co/3yymN1y/login.jpg)
+This document showcases various screens of our application to provide a visual overview of its functionality and user interface.
 
-## Create Account Screen
-![Create Account Screen](https://i.ibb.co/CQbyp6Y/create.jpg)
+## Screenshots
 
-## Home Screen
-![Home Screen](https://i.ibb.co/TTQzw6R/home.jpg)
+<table>
+  <tr>
+    <td>
+      <img src="https://i.ibb.co/7JXWPPz/welcome.jpg" alt="Welcome Screen" height="400">
+      <p>Welcome Screen</p>
+    </td>
+    <td>
+      <img src="https://i.ibb.co/3yymN1y/login.jpg" alt="Login Screen" height="400">
+      <p>Login Screen</p>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <img src="https://i.ibb.co/CQbyp6Y/create.jpg" alt="Create Account Screen" height="400">
+      <p>Create Account Screen</p>
+    </td>
+    <td>
+      <img src="https://i.ibb.co/TTQzw6R/home.jpg" alt="Home Screen" height="400">
+      <p>Home Screen</p>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <img src="https://i.ibb.co/ZN6Zdr4/setting.jpg" alt="Settings Screen" height="400">
+      <p>Settings Screen</p>
+    </td>
+    <td>
+      <img src="https://i.ibb.co/By7cXRw/account.jpg" alt="Profile Screen" height="400">
+      <p>Profile Screen</p>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <img src="https://i.ibb.co/8zV8sDq/changepassword.jpg" alt="Change Password Screen" height="400">
+      <p>Change Password Screen</p>
+    </td>
+    <td>
+      <!-- Empty cell for symmetry -->
+    </td>
+  </tr>
+</table>
 
-## Settings Screen
-![Settings Screen](https://i.ibb.co/ZN6Zdr4/setting.jpg)
+---
 
-## Profile Screen
-![Profile Screen](https://i.ibb.co/By7cXRw/account.jpg)
-
-## Change Password Screen
-![Change Password Screen](https://i.ibb.co/8zV8sDq/changepassword.jpg)
 
 ---
 
