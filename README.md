@@ -3,11 +3,42 @@
 
 Aplicación móvil para la recolección de basura en colaboración con la ONG Paso Pacífico y Cur-Carazo.
 
+## About Paso Pacifico
+
+Paso Pacifico is a non-profit organization dedicated to environmental conservation in Central America. Its projects focus on biodiversity protection through the creation of wildlife corridors. To achieve this, it collaborates with local communities, landowners, and partner organizations to restore and protect habitats.
+
 ## Repositorio del Proyecto
 
 Puedes acceder al código fuente de este proyecto en GitHub:
 
 - [Repositorio paso_pacifico](https://github.com/Jefrey13/paso_pacifico.git)
+
+# Screenshots of the Application
+
+This document showcases various screens of our application to provide a visual overview of its functionality and user interface.
+
+## Welcome Screen
+![Welcome Screen](https://i.ibb.co/7JXWPPz/welcome.jpg)
+
+## Login Screen
+![Login Screen](https://i.ibb.co/3yymN1y/login.jpg)
+
+## Create Account Screen
+![Create Account Screen](https://i.ibb.co/CQbyp6Y/create.jpg)
+
+## Home Screen
+![Home Screen](https://i.ibb.co/TTQzw6R/home.jpg)
+
+## Settings Screen
+![Settings Screen](https://i.ibb.co/ZN6Zdr4/setting.jpg)
+
+## Profile Screen
+![Profile Screen](https://i.ibb.co/By7cXRw/account.jpg)
+
+## Change Password Screen
+![Change Password Screen](https://i.ibb.co/8zV8sDq/changepassword.jpg)
+
+---
 
 ## Estructura del Proyecto
 
