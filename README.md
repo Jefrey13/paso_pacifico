@@ -33,8 +33,6 @@ This document showcases various screens of our application to provide a visual o
       <img src="https://i.ibb.co/3yymN1y/login.jpg" alt="Login Screen" height="400">
       <p>Login Screen</p>
     </td>
-  </tr>
-  <tr>
     <td>
       <img src="https://i.ibb.co/CQbyp6Y/create.jpg" alt="Create Account Screen" height="400">
       <p>Create Account Screen</p>
@@ -53,9 +51,7 @@ This document showcases various screens of our application to provide a visual o
       <img src="https://i.ibb.co/By7cXRw/account.jpg" alt="Profile Screen" height="400">
       <p>Profile Screen</p>
     </td>
-  </tr>
-  <tr>
-    <td>
+        <td>
       <img src="https://i.ibb.co/8zV8sDq/changepassword.jpg" alt="Change Password Screen" height="400">
       <p>Change Password Screen</p>
     </td>
